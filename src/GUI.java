@@ -1,12 +1,12 @@
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JSlider;
 
 public class GUI extends javax.swing.JFrame {
     final private TimeUnits time;
@@ -26,8 +26,7 @@ public class GUI extends javax.swing.JFrame {
         try {
             File file = new File(
                 ClassLoader.getSystemResource("resources/beep.wav").toURI());
-            beep = Beep.getInstance(file);
-            beep.start();
+            beep = new Beep(file);
 
             file = new File(
                 ClassLoader.getSystemResource("resources/alarm.wav").toURI());
@@ -282,7 +281,7 @@ public class GUI extends javax.swing.JFrame {
                         TimeUnits.timeUnitsAreEqual(time, targetTime)) {
                         timer.cancel();
                         alarm.play();
-                        
+
                         intervalCheckbox.setEnabled(true);
                         setSpinnersEnabled(true);
                     }
@@ -362,10 +361,15 @@ public class GUI extends javax.swing.JFrame {
 
     private void volumeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
         volume = volumeSlider.getValue();
-//        beep.setVolume(volume, volumeSlider.getExtent());
+        beep.setVolume(volume, getVolumeRange(volumeSlider));
+        alarm.setVolume(volume, getVolumeRange(volumeSlider));
         if (volume == 0)
             muteCheckbox.setSelected(true);
     }//GEN-LAST:event_volumeSliderStateChanged
+
+    static private int getVolumeRange(JSlider slider) {
+        return Math.abs(slider.getMaximum() - slider.getMinimum());
+    }
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
