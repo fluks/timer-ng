@@ -19,6 +19,12 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public abstract class ClipWrapper {
     protected Clip clip;
 
+    /** Empty constructor. If this is used, you need to call
+     * {@link #openClip openClip}, before using any other methods in this
+     * class or in the deriving class.
+     */
+    public ClipWrapper() {}
+
     /** Create a new instance and try to open the file to play.
      * @param file Audio file to play.
      * @throws LineUnavailableException
@@ -36,6 +42,9 @@ public abstract class ClipWrapper {
      * would be 100.
      */
     public void setVolume(int volume, int range) {
+        if (clip == null)
+            throw new NullPointerException();
+
         FloatControl c =
             (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         Float max = c.getMaximum();
@@ -49,6 +58,9 @@ public abstract class ClipWrapper {
      * @param mute True to mute the line, false to un-mute.
      */ 
     public void mute(boolean mute) {
+        if (clip == null)
+            throw new NullPointerException();
+
         BooleanControl c = (BooleanControl) clip.getControl(
             BooleanControl.Type.MUTE);
         c.setValue(mute);
@@ -74,6 +86,9 @@ public abstract class ClipWrapper {
     /** Stop playing the clip and rewind to the beginning.
      */
     public void stopAndRewind() {
+        if (clip == null)
+            throw new NullPointerException();
+
         clip.stop();
         clip.flush();
         clip.setFramePosition(0);

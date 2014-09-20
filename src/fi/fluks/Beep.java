@@ -11,6 +11,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class Beep extends ClipWrapper {
 
+    public Beep() {}
+
     /**
      * @param file The beep sound file.
      * @throws LineUnavailableException
@@ -26,6 +28,9 @@ public class Beep extends ClipWrapper {
     /** Play the beep sound once and rewind to the beginning.
     */
     public void play() {
+        if (clip == null)
+            throw new NullPointerException();
+
         clip.start();
         clip.setFramePosition(0);
     }

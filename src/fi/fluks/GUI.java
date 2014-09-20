@@ -1,16 +1,13 @@
 package fi.fluks;
 
-
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Window;
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JOptionPane;
 import javax.swing.JSlider;
 
 public class GUI extends javax.swing.JFrame {
@@ -18,8 +15,8 @@ public class GUI extends javax.swing.JFrame {
     final private TimeUnits targetTime;
     private Timer timer;
     private boolean timerIsRunning = false;
-    private Beep beep;
-    private Alarm alarm;
+    private ClipWrapper beep = new Beep();
+    private ClipWrapper alarm = new Alarm();
 
     public GUI() {
         time = new TimeUnits();
@@ -28,24 +25,42 @@ public class GUI extends javax.swing.JFrame {
         initComponents();
         setLocation(getScreenCenterForWindow((Window) this));
 
-        try {
-            File file = new File(
-                ClassLoader.getSystemResource("resources/beep.wav").toURI());
-            beep = new Beep(file);
+        beep = loadSound(beep, "resources/beep.wav");
+        alarm = loadSound(alarm, "resources/alarm.wav");
 
-            file = new File(
-                ClassLoader.getSystemResource("resources/alarm.wav").toURI());
-            alarm = new Alarm(file);
-        }
-        catch (UnsupportedAudioFileException | LineUnavailableException |
-            IOException | URISyntaxException e) {
-            System.err.println(e.getMessage());
+        if ((beep instanceof NoSound) && (alarm instanceof NoSound)) {
+            volumeSlider.setEnabled(false);
+            muteCheckbox.setEnabled(false);
         }
 
         alarm.setVolume(getSliderMiddle(volumeSlider),
             getSlideRange(volumeSlider));
         beep.setVolume(getSliderMiddle(volumeSlider),
             getSlideRange(volumeSlider));
+    }
+
+    /** Load a sound object by opening a clip for it.
+     * @param cw An object, which clip will be opened.
+     * @param resource A path to resource. cw opens a clip to this resource.
+     * @return An object, which clip is opened to the resource, or if something
+     * fails, a {@link fi.fluks.NoSound NoSound} instance, which doesn't do
+     * anything.
+     */
+    private ClipWrapper loadSound(ClipWrapper cw, String resource) {
+        try {
+            URL url = ClassLoader.getSystemResource(resource);
+            if (url == null)
+                throw new Exception("Can't get system resource, " + resource);
+            else
+                cw.openClip(new File(url.toURI()));
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Failed to load audio.\n\n" + e.getMessage());
+            cw = new NoSound();
+        }
+
+        return cw;
     }
 
     /**

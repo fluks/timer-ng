@@ -11,6 +11,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class Alarm extends ClipWrapper {
 
+    public Alarm() {}
+    
     /**
      * @param file The alarm sound file.
      * @throws LineUnavailableException
@@ -26,6 +28,9 @@ public class Alarm extends ClipWrapper {
     /** Play the alarm sound continuously.
     */
     public void play() {
+        if (clip == null)
+            throw new NullPointerException();
+
         clip.loop(Clip.LOOP_CONTINUOUSLY);
         clip.start();
     }
