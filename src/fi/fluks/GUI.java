@@ -1,6 +1,9 @@
 package fi.fluks;
 
 
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -23,7 +26,9 @@ public class GUI extends javax.swing.JFrame {
         time = new TimeUnits();
         targetTime = new TimeUnits();
         
+        
         initComponents();
+        setLocation(getScreenCenterForWindow((Window) this));
 
         try {
             File file = new File(
@@ -372,6 +377,21 @@ public class GUI extends javax.swing.JFrame {
 
     static private int getVolumeRange(JSlider slider) {
         return Math.abs(slider.getMaximum() - slider.getMinimum());
+    }
+
+    /** Calculate such a point for a window, that when positioned on that
+     * point, the window will be in the center of the screen.
+     * @return Point for centering a window.
+     */
+    static private Point getScreenCenterForWindow(Window c) {
+        double height = c.getBounds().getHeight();
+        double width  = c.getBounds().getWidth();
+        Point center  = GraphicsEnvironment.getLocalGraphicsEnvironment().
+            getCenterPoint();
+        center.setLocation(center.getX() - width / 2,
+                           center.getY() - height / 2);
+        
+        return center;
     }
 
     public static void main(String args[]) {
