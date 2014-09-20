@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.BooleanControl;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
@@ -41,6 +42,16 @@ public abstract class ClipWrapper {
         Float min = c.getMinimum();
         Float distance = Math.abs(max - min);
         c.setValue(min + (distance / range) * volume);
+    }
+
+    /** Set the line mute control of the line. Doesn't affect the volume of
+     * the line.
+     * @param mute True to mute the line, false to un-mute.
+     */ 
+    public void mute(boolean mute) {
+        BooleanControl c = (BooleanControl) clip.getControl(
+            BooleanControl.Type.MUTE);
+        c.setValue(mute);
     }
 
     /** Open the audio file for ready to play.

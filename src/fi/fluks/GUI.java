@@ -18,14 +18,12 @@ public class GUI extends javax.swing.JFrame {
     final private TimeUnits targetTime;
     private Timer timer;
     private boolean timerIsRunning = false;
-    private int volume = 50;
     private Beep beep;
     private Alarm alarm;
 
     public GUI() {
         time = new TimeUnits();
         targetTime = new TimeUnits();
-        
         
         initComponents();
         setLocation(getScreenCenterForWindow((Window) this));
@@ -43,6 +41,11 @@ public class GUI extends javax.swing.JFrame {
             IOException | URISyntaxException e) {
             System.err.println(e.getMessage());
         }
+
+        alarm.setVolume(getSliderMiddle(volumeSlider),
+            getSlideRange(volumeSlider));
+        beep.setVolume(getSliderMiddle(volumeSlider),
+            getSlideRange(volumeSlider));
     }
 
     /**
@@ -256,11 +259,13 @@ public class GUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void muteCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_muteCheckboxActionPerformed
-        if (muteCheckbox.isSelected())
-            volumeSlider.setValue(0);
+        if (muteCheckbox.isSelected()) {
+            alarm.mute(true);
+            beep.mute(true);
+        }
         else {
-            volume = 50;    
-            volumeSlider.setValue(volume);
+            alarm.mute(false);
+            beep.mute(false);
         }
     }//GEN-LAST:event_muteCheckboxActionPerformed
 
@@ -368,15 +373,31 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_millisecondSpinnerStateChanged
 
     private void volumeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
-        volume = volumeSlider.getValue();
-        beep.setVolume(volume, getVolumeRange(volumeSlider));
-        alarm.setVolume(volume, getVolumeRange(volumeSlider));
-        if (volume == 0)
-            muteCheckbox.setSelected(true);
+        int volume = volumeSlider.getValue();
+        beep.setVolume(volume, getSlideRange(volumeSlider));
+        alarm.setVolume(volume, getSlideRange(volumeSlider));
+        
+        if (muteCheckbox.isSelected()) {
+            muteCheckbox.setSelected(false);
+            beep.mute(false);
+            alarm.mute(false);
+        }
     }//GEN-LAST:event_volumeSliderStateChanged
 
-    static private int getVolumeRange(JSlider slider) {
+    /** Get range of the slider. |slider.max - slider.min|.
+     * @param slider
+     * @return The range of the slider.
+     */
+    static private int getSlideRange(JSlider slider) {
         return Math.abs(slider.getMaximum() - slider.getMinimum());
+    }
+
+    /** Get middle value of a slider component.
+     * @param slider
+     * @return
+     */
+    static private int getSliderMiddle(JSlider slider) {
+        return (slider.getMaximum() - slider.getMinimum()) / 2;
     }
 
     /** Calculate such a point for a window, that when positioned on that
