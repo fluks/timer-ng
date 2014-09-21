@@ -24,6 +24,7 @@ public class GUI extends javax.swing.JFrame {
         
         initComponents();
         setLocation(getScreenCenterForWindow((Window) this));
+        getRootPane().setDefaultButton(startStopButton);
 
         beep = loadSound(beep, "resources/beep.wav");
         alarm = loadSound(alarm, "resources/alarm.wav");
