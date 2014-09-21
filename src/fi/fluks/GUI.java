@@ -3,8 +3,7 @@ package fi.fluks;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Window;
-import java.io.File;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.JOptionPane;
@@ -26,8 +25,8 @@ public class GUI extends javax.swing.JFrame {
         setLocation(getScreenCenterForWindow((Window) this));
         getRootPane().setDefaultButton(startStopButton);
 
-        beep = loadSound(beep, "resources/beep.wav");
-        alarm = loadSound(alarm, "resources/alarm.wav");
+        beep = loadSound(beep, "/resources/beep.wav");
+        alarm = loadSound(alarm, "/resources/alarm.wav");
 
         if ((beep instanceof NoSound) && (alarm instanceof NoSound)) {
             volumeSlider.setEnabled(false);
@@ -49,11 +48,10 @@ public class GUI extends javax.swing.JFrame {
      */
     private ClipWrapper loadSound(ClipWrapper cw, String resource) {
         try {
-            URL url = ClassLoader.getSystemResource(resource);
-            if (url == null)
+            InputStream is = getClass().getResourceAsStream(resource);
+            if (is == null)
                 throw new Exception("Can't get system resource, " + resource);
-            else
-                cw.openClip(new File(url.toURI()));
+            cw.openClip(is);
         }
         catch (Exception e) {
             JOptionPane.showMessageDialog(this,

@@ -1,7 +1,7 @@
 package fi.fluks;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -14,14 +14,14 @@ public class Beep extends ClipWrapper {
     public Beep() {}
 
     /**
-     * @param file The beep sound file.
+     * @param is The beep sound stream.
      * @throws LineUnavailableException
      * @throws UnsupportedAudioFileException
      * @throws IOException 
      */
-    public Beep(File file) throws LineUnavailableException,
+    public Beep(InputStream is) throws LineUnavailableException,
         UnsupportedAudioFileException, IOException {
-        super(file);
+        super(is);
     }
 
     @Override

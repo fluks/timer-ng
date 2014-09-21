@@ -1,7 +1,7 @@
 package fi.fluks;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -14,14 +14,14 @@ public class Alarm extends ClipWrapper {
     public Alarm() {}
     
     /**
-     * @param file The alarm sound file.
+     * @param is The alarm sound stream.
      * @throws LineUnavailableException
      * @throws UnsupportedAudioFileException
      * @throws IOException 
      */
-    public Alarm(File file) throws LineUnavailableException,
+    public Alarm(InputStream is) throws LineUnavailableException,
         UnsupportedAudioFileException, IOException {
-        super(file);
+        super(is);
     }
 
     @Override

@@ -1,8 +1,9 @@
 package fi.fluks;
 
 
-import java.io.File;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.BooleanControl;
@@ -26,14 +27,14 @@ public abstract class ClipWrapper {
     public ClipWrapper() {}
 
     /** Create a new instance and try to open the file to play.
-     * @param file Audio file to play.
+     * @param is Audio stream to play.
      * @throws LineUnavailableException
      * @throws UnsupportedAudioFileException
      * @throws IOException 
      */
-    public ClipWrapper(File file) throws LineUnavailableException,
+    public ClipWrapper(InputStream is) throws LineUnavailableException,
         UnsupportedAudioFileException, IOException {
-        openClip(file);
+        openClip(is);
     }
 
      /** Sets the volume for the master gain control of the line.
@@ -67,15 +68,18 @@ public abstract class ClipWrapper {
     }
 
     /** Open the audio file for ready to play.
-     * @param file Audio file to play.
+     * @param is Audio stream to play.
      * @throws LineUnavailableException
      * @throws UnsupportedAudioFileException
      * @throws IOException 
      */
-    public final void openClip(File file) throws LineUnavailableException,
+    public final void openClip(InputStream is) throws LineUnavailableException,
         UnsupportedAudioFileException, IOException {
         clip = AudioSystem.getClip();
-        AudioInputStream ais = AudioSystem.getAudioInputStream(file);
+        /* Without BufferedInputStream throws(mark/reset not supported)
+         * running jar. */
+        AudioInputStream ais = AudioSystem.getAudioInputStream(
+            new BufferedInputStream(is));
         clip.open(ais);
     }
     
