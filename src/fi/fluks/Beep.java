@@ -2,6 +2,7 @@ package fi.fluks;
 
 import java.io.IOException;
 import java.io.InputStream;
+import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -32,6 +33,12 @@ public class Beep extends ClipWrapper {
             throw new NullPointerException();
 
         clip.start();
-        clip.setFramePosition(0);
+        /* TimerTask's run() is now run in Swing's event dispatch thread,
+         * without this listener(if we would only call setFramePosition), beeps
+         * would not be complete beeps, I don't know why. */
+        clip.addLineListener((LineEvent e) -> {
+            if (e.getType() == LineEvent.Type.STOP && clip != null)
+                clip.setFramePosition(0);
+        });
     }
 }

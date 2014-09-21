@@ -8,6 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.JOptionPane;
 import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 
 public class GUI extends javax.swing.JFrame {
     final private TimeUnits time = new TimeUnits();
@@ -336,22 +337,26 @@ public class GUI extends javax.swing.JFrame {
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    time.advance();
-                    timeLabel.setText(time.toString());
+                    /* Everything using Swing components, must be done from
+                     * its event dispatching thread. */
+                    SwingUtilities.invokeLater(() -> {
+                        time.advance();
+                        timeLabel.setText(time.toString());
 
-                    if (isTargetTimeSet &&
-                        !isIntervalSelected &&
-                        TimeUnits.timeUnitsAreEqual(time, targetTime)) {
-                        timer.cancel();
-                        alarm.play();
+                        if (isTargetTimeSet &&
+                            !isIntervalSelected &&
+                            TimeUnits.timeUnitsAreEqual(time, targetTime)) {
+                            timer.cancel();
+                            alarm.play();
 
-                        intervalCheckbox.setEnabled(true);
-                        setSpinnersEnabled(true);
-                    }
-                    else if (isIntervalSelected &&
-                        isModuloTime(time, targetTime)) {
-                        beep.play();
-                    }
+                            intervalCheckbox.setEnabled(true);
+                            setSpinnersEnabled(true);
+                        }
+                        else if (isIntervalSelected &&
+                            isModuloTime(time, targetTime)) {
+                            beep.play();
+                        }
+                    });
                 }
             }, 1, 1);
         }
