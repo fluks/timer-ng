@@ -62,10 +62,10 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="volumeSlider" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="volumeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="muteCheckbox" alignment="0" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="2" attributes="0">
+                  <Component id="volumeSlider" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="volumeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="muteCheckbox" alignment="2" min="-2" max="-2" attributes="0"/>
               </Group>
               <Group type="103" groupAlignment="2" attributes="0">
                   <Component id="timeLabel" alignment="2" max="32767" attributes="0"/>
