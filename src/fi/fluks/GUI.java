@@ -10,23 +10,22 @@ import javax.swing.JOptionPane;
 import javax.swing.JSlider;
 
 public class GUI extends javax.swing.JFrame {
-    final private TimeUnits time;
-    final private TimeUnits targetTime;
+    final private TimeUnits time = new TimeUnits();
+    final private TimeUnits targetTime = new TimeUnits();
     private Timer timer;
     private boolean timerIsRunning = false;
     private ClipWrapper beep = new Beep();
     private ClipWrapper alarm = new Alarm();
+    private static final String BEEP_FILE = "/resources/beep.wav";
+    private static final String ALARM_FILE = "/resources/alarm.wav";
 
     public GUI() {
-        time = new TimeUnits();
-        targetTime = new TimeUnits();
-        
         initComponents();
         setLocation(getScreenCenterForWindow((Window) this));
         getRootPane().setDefaultButton(startStopButton);
 
-        beep = loadSound(beep, "/resources/beep.wav");
-        alarm = loadSound(alarm, "/resources/alarm.wav");
+        beep = loadSound(beep, BEEP_FILE);
+        alarm = loadSound(alarm, ALARM_FILE);
 
         if ((beep instanceof NoSound) && (alarm instanceof NoSound)) {
             volumeSlider.setEnabled(false);
@@ -366,7 +365,7 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_startStopButtonActionPerformed
 
-    private boolean isModuloTime(TimeUnits t1, TimeUnits t2) {
+    private static boolean isModuloTime(TimeUnits t1, TimeUnits t2) {
         long t2Ms = t2.timeInMilliseconds();
         // Illegal division by zero. 
         if (t2Ms == 0)
@@ -434,7 +433,7 @@ public class GUI extends javax.swing.JFrame {
      * @param slider
      * @return The range of the slider.
      */
-    static private int getSlideRange(JSlider slider) {
+    private static int getSlideRange(JSlider slider) {
         return Math.abs(slider.getMaximum() - slider.getMinimum());
     }
 
@@ -442,7 +441,7 @@ public class GUI extends javax.swing.JFrame {
      * @param slider
      * @return
      */
-    static private int getSliderMiddle(JSlider slider) {
+    private static int getSliderMiddle(JSlider slider) {
         return (slider.getMaximum() - slider.getMinimum()) / 2;
     }
 
@@ -450,7 +449,7 @@ public class GUI extends javax.swing.JFrame {
      * point, the window will be in the center of the screen.
      * @return Point for centering a window.
      */
-    static private Point getScreenCenterForWindow(Window c) {
+    private static Point getScreenCenterForWindow(Window c) {
         double height = c.getBounds().getHeight();
         double width  = c.getBounds().getWidth();
         Point center  = GraphicsEnvironment.getLocalGraphicsEnvironment().
