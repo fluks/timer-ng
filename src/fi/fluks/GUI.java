@@ -176,7 +176,7 @@ public class GUI extends javax.swing.JFrame {
         jLabel1.setLabelFor(hourSpinner);
         jLabel1.setText("hours");
 
-        jLabel2.setDisplayedMnemonic('m');
+        jLabel2.setDisplayedMnemonic('n');
         jLabel2.setLabelFor(minuteSpinner);
         jLabel2.setText("minutes");
 
