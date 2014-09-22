@@ -340,9 +340,6 @@ public class GUI extends javax.swing.JFrame {
                     /* Everything using Swing components, must be done from
                      * its event dispatching thread. */
                     SwingUtilities.invokeLater(() -> {
-                        time.advance();
-                        timeLabel.setText(time.toString());
-
                         if (isTargetTimeSet &&
                             !isIntervalSelected &&
                             TimeUnits.timeUnitsAreEqual(time, targetTime)) {
@@ -352,7 +349,12 @@ public class GUI extends javax.swing.JFrame {
                             intervalCheckbox.setEnabled(true);
                             setSpinnersEnabled(true);
                         }
-                        else if (isIntervalSelected &&
+                        else {
+                            time.advance();
+                            timeLabel.setText(time.toString());
+                        }
+
+                        if (isIntervalSelected &&
                             isModuloTime(time, targetTime)) {
                             beep.play();
                         }
