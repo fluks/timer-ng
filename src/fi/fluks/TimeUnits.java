@@ -173,9 +173,17 @@ public class TimeUnits {
     /**
      * @param format Format string to use in {@link #toString() toString}.
      * @return This object.
+     * @throws NullPointerException If format is null.
+     * @throws IllegalFormatException If format is invalid.
      */
     public TimeUnits setFormat(String format) {
+        if (format == null)
+            throw new NullPointerException("Format can't be null");
+                
         this.format = format;
+        // Test early that format string is valid.
+        toString();
+
         return this;
     }
 
@@ -201,7 +209,6 @@ public class TimeUnits {
      * delimiter and milliseconds. Format string should have corresponding
      * format specifiers.
      * @return TimeUnits object's represented as a String.
-     * @throws IllegalFormatException If format string is not valid.
      */
     @Override
     public String toString() {

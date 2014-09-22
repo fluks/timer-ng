@@ -1,5 +1,6 @@
 package fi.fluks;
 
+import java.util.IllegalFormatException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -142,6 +143,7 @@ public class TimeUnitsTest {
 
         tu.setHours(1).setMinutes(1).setSeconds(1).setMilliseconds(1);
         tu2.setHours(1).setMinutes(1).setSeconds(1).setMilliseconds(1);
+        assertTrue(TimeUnits.timeUnitsAreEqual(tu, tu2));
     }
 
     @Test
@@ -154,5 +156,40 @@ public class TimeUnitsTest {
                         1 * 1000 + 
                         1;
         assertEquals(expected, tu.timeInMilliseconds());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void setFormatWithNull() {
+        tu.setFormat(null);
+    }
+
+    @Test(expected = IllegalFormatException.class)
+    public void setFormatInvalid() {
+        tu.setFormat("%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d");
+    }
+
+    @Test
+    public void setFormatOk() {
+        // Java's format strings are quite forgiving. Doesn't throw easily.
+        tu.setFormat("%d");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void modDivisionByZero() {
+        tu.mod(new TimeUnits());
+    }
+
+    @Test
+    public void modOk() {
+        TimeUnits t2 = new TimeUnits(0, 0, 0, 1);
+        assertEquals(0, tu.mod(t2));
+
+        tu.advance();
+        assertEquals(0, tu.mod(t2));
+
+        tu.setMilliseconds(3);
+        assertEquals(1, tu.mod(t2.setMilliseconds(2)));
+
+        assertEquals(3, tu.mod(t2.setMilliseconds(4)));
     }
 }
