@@ -11,6 +11,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class Alarm extends ClipWrapper {
 
+    /** Initialize new Alarm object without opening a clip.
+     */
     public Alarm() {}
     
     /**

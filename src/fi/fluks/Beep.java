@@ -12,6 +12,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class Beep extends ClipWrapper {
 
+    /** Initialize new Beep object without opening a clip.
+     */
     public Beep() {}
 
     /**

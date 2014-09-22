@@ -8,19 +8,26 @@ package fi.fluks;
  */
 public class NoSound extends ClipWrapper {
 
+    /** Nop.
+     * @param mute 
+     */
     @Override
-    public void mute(boolean mute) {
-    }
+    public void mute(boolean mute) { }
 
+    /** Nop.
+     */
     @Override
-    public void play() {
-    }
+    public void play() { }
 
+    /** Nop.
+     * @param volume
+     * @param range 
+     */
     @Override
-    public void setVolume(int volume, int range) {
-    }
+    public void setVolume(int volume, int range) { }
 
+    /** Nop.
+     */
     @Override
-    public void stopAndRewind() {
-    }
+    public void stopAndRewind() { }
 }
