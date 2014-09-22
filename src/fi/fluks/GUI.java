@@ -350,7 +350,7 @@ public class GUI extends javax.swing.JFrame {
                             intervalCheckbox.setEnabled(true);
                             setSpinnersEnabled(true);
                         }
-                        else {
+                        else if (timerIsRunning) {
                             time.advance();
                             timeLabel.setText(time.toString());
                         }
@@ -397,6 +397,7 @@ public class GUI extends javax.swing.JFrame {
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         timer.cancel();
+        timerIsRunning = false;
         time.reset();
         targetTime.reset();
         timeLabel.setText(time.toString());
