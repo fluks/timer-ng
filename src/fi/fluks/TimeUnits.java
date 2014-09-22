@@ -231,6 +231,18 @@ public class TimeUnits {
                seconds * MILLISECONDS_MAX +
                milliseconds;
     }
+    
+    /** Calculate this mod that.
+     * @param that Other TimeUnits object.
+     * @return This is milliseconds mod that in milliseconds.
+     * @throws IllegalArgumentException If that is zero in milliseconds.
+     */
+    public long mod(TimeUnits that) {
+        long t2Ms = that.timeInMilliseconds();
+        if (t2Ms == 0)
+            throw new IllegalArgumentException("Division by zero");
+        return timeInMilliseconds() % t2Ms;
+    }
    
     /** Step one minute ahead.
      */

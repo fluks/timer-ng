@@ -22,6 +22,7 @@ public class GUI extends javax.swing.JFrame {
 
     public GUI() {
         initComponents();
+        intervalCheckbox.setEnabled(false);
         setLocation(getScreenCenterForWindow((Window) this));
         getRootPane().setDefaultButton(startStopButton);
 
@@ -355,7 +356,8 @@ public class GUI extends javax.swing.JFrame {
                         }
 
                         if (isIntervalSelected &&
-                            isModuloTime(time, targetTime)) {
+                            targetTime.timeInMilliseconds() != 0 &&
+                            time.mod(targetTime) == 0) {
                             beep.play();
                         }
                     });
@@ -367,19 +369,15 @@ public class GUI extends javax.swing.JFrame {
             timerIsRunning = false;
             alarm.stopAndRewind();
             
-            intervalCheckbox.setEnabled(true);
             setSpinnersEnabled(true);
+            enableIntervalIfTargetTimeIsSet();
         }
     }//GEN-LAST:event_startStopButtonActionPerformed
 
-    private static boolean isModuloTime(TimeUnits t1, TimeUnits t2) {
-        long t2Ms = t2.timeInMilliseconds();
-        // Illegal division by zero. 
-        if (t2Ms == 0)
-            return false;
-        return t1.timeInMilliseconds() % t2Ms == 0;
-    }
-
+    /** Check is target time set. It's set if at least some of the spinners
+     * is non-zero.
+     * @return False if all the spinners have zero value, true otherwise.
+     */
     private boolean isTargetTimeSet() {
         return ((Integer) hourSpinner.getValue()) != 0 ||
                ((Integer) minuteSpinner.getValue()) != 0 ||
@@ -387,6 +385,9 @@ public class GUI extends javax.swing.JFrame {
                ((Integer) millisecondSpinner.getValue()) != 0;
     }
 
+    /** Enable or disable all the spinners.
+     * @param b Enable or disable spinners.
+     */
     private void setSpinnersEnabled(boolean b) {
         hourSpinner.setEnabled(b);
         minuteSpinner.setEnabled(b);
@@ -403,25 +404,42 @@ public class GUI extends javax.swing.JFrame {
         minuteSpinner.setValue(0);
         secondSpinner.setValue(0);
         millisecondSpinner.setValue(0);
-        intervalCheckbox.setEnabled(true);
         setSpinnersEnabled(true);
         alarm.stopAndRewind();
+        enableIntervalIfTargetTimeIsSet();
     }//GEN-LAST:event_resetButtonActionPerformed
 
+    /** Interval checkbox can be enabled only when target time is set.
+     * Enable interval checkbox when target time is set. Otherwise, disable
+     * checkbox and set it unselected.
+     */
+    private void enableIntervalIfTargetTimeIsSet() {
+        if (isTargetTimeSet())
+            intervalCheckbox.setEnabled(true);
+        else {
+            intervalCheckbox.setEnabled(false);
+            intervalCheckbox.setSelected(false);
+        }
+    }
+    
     private void hourSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_hourSpinnerStateChanged
         targetTime.setHours((Integer) hourSpinner.getValue());
+        enableIntervalIfTargetTimeIsSet();
     }//GEN-LAST:event_hourSpinnerStateChanged
 
     private void minuteSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_minuteSpinnerStateChanged
         targetTime.setMinutes((Integer) minuteSpinner.getValue());
+        enableIntervalIfTargetTimeIsSet();
     }//GEN-LAST:event_minuteSpinnerStateChanged
 
     private void secondSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_secondSpinnerStateChanged
         targetTime.setSeconds((Integer) secondSpinner.getValue());
+        enableIntervalIfTargetTimeIsSet();
     }//GEN-LAST:event_secondSpinnerStateChanged
 
     private void millisecondSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_millisecondSpinnerStateChanged
         targetTime.setMilliseconds((Integer) millisecondSpinner.getValue());
+        enableIntervalIfTargetTimeIsSet();
     }//GEN-LAST:event_millisecondSpinnerStateChanged
 
     private void volumeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
