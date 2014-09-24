@@ -403,7 +403,8 @@ public class GUI extends javax.swing.JFrame {
     }
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        timer.cancel();
+       if (timer != null)
+            timer.cancel();
         timerIsRunning = false;
         time.reset();
         targetTime.reset();
