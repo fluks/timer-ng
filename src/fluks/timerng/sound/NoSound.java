@@ -1,4 +1,4 @@
-package fi.fluks.sound;
+package fluks.timerng.sound;
 
 /** A class to use instead of {@link fi.fluks.Alarm Alarm} or
  * {@link fi.fluks.Beep Beep}, when audio is not available. This class

@@ -1,7 +1,7 @@
 package fi.fluks;
 
-import fi.fluks.sound.NoSound;
-import fi.fluks.sound.AbstractClipWrapper;
+import fluks.timerng.sound.NoSound;
+import fluks.timerng.sound.AbstractClipWrapper;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;

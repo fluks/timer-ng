@@ -1,5 +1,6 @@
 package fi.fluks;
 
+import fluks.timerng.TimeUnits;
 import java.util.IllegalFormatException;
 import org.junit.Before;
 import org.junit.Test;

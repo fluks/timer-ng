@@ -1,9 +1,9 @@
-package fi.fluks;
+package fluks.timerng;
 
-import fi.fluks.sound.NoSound;
-import fi.fluks.sound.Beep;
-import fi.fluks.sound.AbstractClipWrapper;
-import fi.fluks.sound.Alarm;
+import fluks.timerng.sound.NoSound;
+import fluks.timerng.sound.Beep;
+import fluks.timerng.sound.AbstractClipWrapper;
+import fluks.timerng.sound.Alarm;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Window;

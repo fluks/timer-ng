@@ -1,4 +1,4 @@
-package fi.fluks.sound;
+package fluks.timerng.sound;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

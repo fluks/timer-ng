@@ -1,4 +1,4 @@
-package fi.fluks;
+package fluks.timerng;
 
 import java.util.IllegalFormatException;
 

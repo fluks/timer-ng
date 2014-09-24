@@ -1,7 +1,7 @@
 package fi.fluks;
 
-import fi.fluks.sound.Beep;
-import fi.fluks.sound.AbstractClipWrapper;
+import fluks.timerng.sound.Beep;
+import fluks.timerng.sound.AbstractClipWrapper;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.sound.sampled.LineUnavailableException;
