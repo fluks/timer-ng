@@ -1,11 +1,13 @@
 package fi.fluks;
 
+import fi.fluks.sound.NoSound;
+import fi.fluks.sound.AbstractClipWrapper;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
 public class NoSoundTest {
-    private ClipWrapper noSound;
+    private AbstractClipWrapper noSound;
     
     @Before
     public void setUp() {
@@ -19,7 +21,7 @@ public class NoSoundTest {
 
     @Test
     public void objectIsClipWrapper() {
-        assertTrue(noSound instanceof ClipWrapper);
+        assertTrue(noSound instanceof AbstractClipWrapper);
     }
 
     /* Can't really(at least easily) test that these won't do anything. */
@@ -41,5 +43,10 @@ public class NoSoundTest {
     @Test
     public void testStopAndRewind() {
         noSound.stopAndRewind();
+    }
+
+    @Test
+    public void testCloseClip() {
+        noSound.closeClip();
     }
 }

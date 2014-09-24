@@ -1,5 +1,9 @@
 package fi.fluks;
 
+import fi.fluks.sound.NoSound;
+import fi.fluks.sound.Beep;
+import fi.fluks.sound.AbstractClipWrapper;
+import fi.fluks.sound.Alarm;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Window;
@@ -15,8 +19,8 @@ public class GUI extends javax.swing.JFrame {
     final private TimeUnits targetTime = new TimeUnits();
     private Timer timer;
     private boolean timerIsRunning = false;
-    private ClipWrapper beep = new Beep();
-    private ClipWrapper alarm = new Alarm();
+    private AbstractClipWrapper beep = new Beep();
+    private AbstractClipWrapper alarm = new Alarm();
     private static final String BEEP_FILE = "/resources/beep.wav";
     private static final String ALARM_FILE = "/resources/alarm.wav";
 
@@ -47,14 +51,15 @@ public class GUI extends javax.swing.JFrame {
      * fails, a {@link fi.fluks.NoSound NoSound} instance, which doesn't do
      * anything.
      */
-    private ClipWrapper loadSound(ClipWrapper cw, String resource) {
-        try {
-            InputStream is = getClass().getResourceAsStream(resource);
+    private AbstractClipWrapper loadSound(AbstractClipWrapper cw,
+        String resource) {
+        try (InputStream is = getClass().getResourceAsStream(resource)) {
             if (is == null)
                 throw new Exception("Can't get system resource, " + resource);
             cw.openClip(is);
         }
         catch (Exception e) {
+            cw.closeClip();
             JOptionPane.showMessageDialog(this,
                 "Failed to load audio.\n\n" + e.getMessage());
             cw = new NoSound();
@@ -323,6 +328,8 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_intervalCheckboxActionPerformed
 
     private void quitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitMenuItemActionPerformed
+        alarm.closeClip();
+        beep.closeClip();
         System.exit(0);
     }//GEN-LAST:event_quitMenuItemActionPerformed
 

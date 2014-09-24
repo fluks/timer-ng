@@ -1,4 +1,4 @@
-package fi.fluks;
+package fi.fluks.sound;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -16,25 +16,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * program, are implemented in this class already, only the {@link #play() play}
  * method needs to be implemented by the subclass.
  */
-public abstract class ClipWrapper {
+public abstract class AbstractClipWrapper {
     protected Clip clip;
-
-    /** Empty constructor. If this is used, you need to call
-     * {@link #openClip openClip}, before using any other methods in this
-     * class or in the deriving class.
-     */
-    public ClipWrapper() {}
-
-    /** Create a new instance and try to open the file to play.
-     * @param is Audio stream to play.
-     * @throws LineUnavailableException
-     * @throws UnsupportedAudioFileException
-     * @throws IOException 
-     */
-    public ClipWrapper(InputStream is) throws LineUnavailableException,
-        UnsupportedAudioFileException, IOException {
-        openClip(is);
-    }
 
      /** Sets the volume for the master gain control of the line.
      * @param volume
@@ -53,9 +36,8 @@ public abstract class ClipWrapper {
         c.setValue(min + (distance / range) * volume);
     }
 
-    /** Set the line mute control of the line. Doesn't affect the volume of
-     * the line.
-     * @param mute True to mute the line, false to un-mute.
+    /** Set the line mute. Doesn't affect the volume of the line.
+     * @param mute True to mute the line, false to change it not be mute.
      */ 
     public void mute(boolean mute) {
         if (clip == null)
@@ -72,7 +54,7 @@ public abstract class ClipWrapper {
      * @throws UnsupportedAudioFileException
      * @throws IOException 
      */
-    public final void openClip(InputStream is) throws LineUnavailableException,
+    public void openClip(InputStream is) throws LineUnavailableException,
         UnsupportedAudioFileException, IOException {
         clip = AudioSystem.getClip();
         /* Without BufferedInputStream throws(mark/reset not supported)
@@ -95,5 +77,12 @@ public abstract class ClipWrapper {
         clip.stop();
         clip.flush();
         clip.setFramePosition(0);
+    }
+
+    /** Close clip.
+     */
+    public void closeClip() {
+        if (clip != null)
+            clip.close();
     }
 }

@@ -1,26 +1,31 @@
 package fi.fluks;
 
+import fi.fluks.sound.Beep;
+import fi.fluks.sound.AbstractClipWrapper;
+import java.io.IOException;
 import java.io.InputStream;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
 public class BeepTest {
-    private ClipWrapper beep;
-    private InputStream is;
+    private AbstractClipWrapper beep;
     private static final int DELAY = 1500;
     private static final int DELAY_BETWEEN_PLAYING = 500;
     private static final String BEEP_FILE = "/resources/beep.wav";
 
     @Before
-    public void setUp() {
-        is = LoadResource.loadResource(BEEP_FILE);
-        try {
-            beep = new Beep(is);
+    public void setUp() throws LineUnavailableException, IOException,
+        UnsupportedAudioFileException {
+        try (InputStream is = LoadResource.loadResource(BEEP_FILE)) {
+            beep = new Beep();
+            beep.openClip(is);
         }
         catch (Exception e) {
-            System.err.println("Can't setup Beep with stream, " +
-                e.getMessage());
+            beep.closeClip();
+            throw e;
         }
     }
 
@@ -31,20 +36,9 @@ public class BeepTest {
     
     @Test
     public void objectIsClipWrapper() {
-        assertTrue(beep instanceof ClipWrapper);
+        assertTrue(beep instanceof AbstractClipWrapper);
     }
 
-    @Test
-    public void initializeWithStreamParam() {
-        try {
-            is = LoadResource.loadResource(BEEP_FILE);
-            beep = new Beep(is);
-        }
-        catch (Exception e) {
-            fail("Can't initialize with stream, " + e.getMessage());
-        }
-    }
-    
     /* The rest of the tests doesn't assert anything. To verify that these
      * succeed, tester needs to use his senses. */
     @Test
@@ -110,5 +104,12 @@ public class BeepTest {
         catch (InterruptedException e) {
             System.err.println("Interrupted, " + e.getMessage());
         }
+    }
+
+    @Test
+    public void closeClip() {
+        beep.closeClip();
+        System.out.println("Play on closed clip.");
+        beep.play();
     }
 }

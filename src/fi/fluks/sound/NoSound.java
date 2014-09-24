@@ -1,12 +1,12 @@
-package fi.fluks;
+package fi.fluks.sound;
 
 /** A class to use instead of {@link fi.fluks.Alarm Alarm} or
  * {@link fi.fluks.Beep Beep}, when audio is not available. This class
- * overrides all the methods in {@link fi.fluks.ClipWrapper ClipWrapper},
+ * overrides all the methods in {@link fi.fluks.ClipWrapper AbstractClipWrapper},
  * replacing them by stubs, which do nothing. This way, a lot of null checks
  * can be avoided.
  */
-public class NoSound extends ClipWrapper {
+public class NoSound extends AbstractClipWrapper {
 
     /** Nop.
      * @param mute 
@@ -30,4 +30,9 @@ public class NoSound extends ClipWrapper {
      */
     @Override
     public void stopAndRewind() { }
+
+    /** Nop.
+     */
+    @Override
+    public void closeClip() { }
 }

@@ -1,27 +1,31 @@
 package fi.fluks;
 
+import fi.fluks.sound.Alarm;
+import fi.fluks.sound.AbstractClipWrapper;
+import java.io.IOException;
 import java.io.InputStream;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
 public class AlarmTest {
-    private ClipWrapper alarm;
-    private InputStream is;
+    private AbstractClipWrapper alarm;
     private static final int DELAY = 1500;
     private static final int DELAY_BETWEEN_PLAYING = 500;
     private static final String ALARM_FILE = "/resources/alarm.wav";
     
     @Before
-    public void setUp() {
-        is = LoadResource.loadResource(ALARM_FILE);
-        try {
-            alarm = new Alarm(is);
+    public void setUp() throws LineUnavailableException, IOException,
+        UnsupportedAudioFileException {
+        try (InputStream is = LoadResource.loadResource(ALARM_FILE)) {
+            alarm = new Alarm();
+            alarm.openClip(is);
         }
         catch (Exception e) {
-            System.err.println("Can't setup Alarm with stream, " +
-                e.getMessage());
+            alarm.closeClip();
+            throw e;
         }
     }
 
@@ -32,20 +36,9 @@ public class AlarmTest {
     
     @Test
     public void objectIsClipWrapper() {
-        assertTrue(alarm instanceof ClipWrapper);
+        assertTrue(alarm instanceof AbstractClipWrapper);
     }
 
-    @Test
-    public void initializeWithStreamParam() {
-        try {
-            is = LoadResource.loadResource(ALARM_FILE);
-            alarm = new Alarm(is);
-        }
-        catch (Exception e) {
-            fail("Can't initialize with stream, " + e.getMessage());
-        }
-    }
-    
     /* The rest of the tests doesn't assert anything. To verify that these
      * succeed, tester needs to use his senses. */
     @Test
@@ -114,5 +107,12 @@ public class AlarmTest {
         catch (InterruptedException e) {
             System.err.println("Interrupted, " + e.getMessage());
         }
+    }
+
+    @Test
+    public void closeClip() {
+        alarm.closeClip();
+        System.out.println("Play on closed clip.");
+        alarm.play();
     }
 }

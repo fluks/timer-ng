@@ -1,31 +1,12 @@
-package fi.fluks;
+package fi.fluks.sound;
 
-import java.io.IOException;
-import java.io.InputStream;
 import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 /** Class for playing the beep sound. When interval is selected and a time
  * set, the @{link #play() play} method on this class' instance, is called,
  * whenever current time modulo interval target time is zero.
  */
-public class Beep extends ClipWrapper {
-
-    /** Initialize new Beep object without opening a clip.
-     */
-    public Beep() {}
-
-    /**
-     * @param is The beep sound stream.
-     * @throws LineUnavailableException
-     * @throws UnsupportedAudioFileException
-     * @throws IOException 
-     */
-    public Beep(InputStream is) throws LineUnavailableException,
-        UnsupportedAudioFileException, IOException {
-        super(is);
-    }
+public class Beep extends AbstractClipWrapper {
 
     @Override
     /** Play the beep sound once and rewind to the beginning.
