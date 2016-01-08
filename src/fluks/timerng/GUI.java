@@ -4,6 +4,7 @@ import fluks.timerng.sound.NoSound;
 import fluks.timerng.sound.Beep;
 import fluks.timerng.sound.AbstractClipWrapper;
 import fluks.timerng.sound.Alarm;
+import java.awt.Color;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Window;
@@ -18,6 +19,8 @@ public class GUI extends javax.swing.JFrame {
     final private TimeUnits time = new TimeUnits();
     final private TimeUnits targetTime = new TimeUnits();
     private Timer timer;
+    private Timer timeLabelFlashTimer = null;
+    private Color timeLabelFg;
     private boolean timerIsRunning = false;
     private AbstractClipWrapper beep = new Beep();
     private AbstractClipWrapper alarm = new Alarm();
@@ -29,6 +32,7 @@ public class GUI extends javax.swing.JFrame {
         intervalCheckbox.setEnabled(false);
         setLocation(getScreenCenterForWindow((Window) this));
         getRootPane().setDefaultButton(startStopButton);
+        timeLabelFg = timeLabel.getForeground();
 
         beep = loadSound(beep, BEEP_FILE);
         alarm = loadSound(alarm, ALARM_FILE);
@@ -333,6 +337,29 @@ public class GUI extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_quitMenuItemActionPerformed
 
+    private Timer flashTime(Timer tOld) {
+        if (tOld != null)
+            tOld.cancel();
+
+        Color bg = timeLabel.getBackground();
+        Timer t = new Timer();
+        t.scheduleAtFixedRate(new TimerTask() {
+            private boolean b = true;
+            private int i = 0;
+            @Override
+            public void run() {
+                Color c = b ? bg : timeLabelFg;
+                b = !b;
+                SwingUtilities.invokeLater(() -> {
+                    timeLabel.setForeground(c);
+                });
+                System.out.println(i++);
+            }
+        }, 0, 500);
+
+        return t;
+    }
+
     private void startStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
         if (!timerIsRunning) {
             timerIsRunning = true;
@@ -353,6 +380,7 @@ public class GUI extends javax.swing.JFrame {
                             TimeUnits.timeUnitsAreEqual(time, targetTime)) {
                             timer.cancel();
                             alarm.play();
+                            timeLabelFlashTimer = flashTime(timeLabelFlashTimer);
 
                             intervalCheckbox.setEnabled(true);
                             setSpinnersEnabled(true);
@@ -373,11 +401,16 @@ public class GUI extends javax.swing.JFrame {
         }
         else {
             timer.cancel();
+            if (timeLabelFlashTimer != null) {
+                timeLabelFlashTimer.cancel();
+                timeLabelFlashTimer = null;
+            }
             timerIsRunning = false;
             alarm.stopAndRewind();
             
             setSpinnersEnabled(true);
             enableIntervalIfTargetTimeIsSet();
+            timeLabel.setForeground(timeLabelFg);
         }
     }//GEN-LAST:event_startStopButtonActionPerformed
 
@@ -403,12 +436,17 @@ public class GUI extends javax.swing.JFrame {
     }
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-       if (timer != null)
+        if (timer != null)
             timer.cancel();
+        if (timeLabelFlashTimer != null) {
+            timeLabelFlashTimer.cancel();
+            timeLabelFlashTimer = null;
+        }
         timerIsRunning = false;
         time.reset();
         targetTime.reset();
         timeLabel.setText(time.toString());
+        timeLabel.setForeground(timeLabelFg);
         hourSpinner.setValue(0);
         minuteSpinner.setValue(0);
         secondSpinner.setValue(0);
