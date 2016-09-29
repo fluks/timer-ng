@@ -9,8 +9,10 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Window;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
@@ -20,15 +22,20 @@ public class GUI extends javax.swing.JFrame {
     final private TimeUnits targetTime = new TimeUnits();
     private Timer timer;
     private Timer timeLabelFlashTimer = null;
-    private Color timeLabelFg;
+    private final Color timeLabelFg;
     private boolean timerIsRunning = false;
     private AbstractClipWrapper beep = new Beep();
     private AbstractClipWrapper alarm = new Alarm();
     private static final String BEEP_FILE = "/resources/beep.wav";
     private static final String ALARM_FILE = "/resources/alarm.wav";
+    private static final String ICON_FILE = "/resources/icon.png";
+    private static final String PROGRAM_NAME = "Timer-ng";
 
     public GUI() {
         initComponents();
+        URL iconURL = getClass().getResource(ICON_FILE);
+        this.setIconImage(new ImageIcon(iconURL).getImage());
+        this.setTitle(PROGRAM_NAME);
         intervalCheckbox.setEnabled(false);
         setLocation(getScreenCenterForWindow((Window) this));
         getRootPane().setDefaultButton(startStopButton);
@@ -345,7 +352,6 @@ public class GUI extends javax.swing.JFrame {
         Timer t = new Timer();
         t.scheduleAtFixedRate(new TimerTask() {
             private boolean b = true;
-            private int i = 0;
             @Override
             public void run() {
                 Color c = b ? bg : timeLabelFg;
@@ -353,7 +359,6 @@ public class GUI extends javax.swing.JFrame {
                 SwingUtilities.invokeLater(() -> {
                     timeLabel.setForeground(c);
                 });
-                System.out.println(i++);
             }
         }, 0, 500);
 
