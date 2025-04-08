@@ -1,20 +1,55 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package fluks.timerng;
 
-/**
- *
- * @author jukka
- */
-public class TimezonesTab extends javax.swing.JPanel {
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.TreeSet;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
-    /**
-     * Creates new form TimerTab
-     */
+public class TimezonesTab extends javax.swing.JPanel {
+    private Map<String, Timer> timers;
+
     public TimezonesTab() {
         initComponents();
+        addTimeZones();
+        timers = new HashMap<>();
+    }
+
+    private void addTimeZones() {
+        var ids = new TreeSet<String>(ZoneId.getAvailableZoneIds());
+        for (var id : ids) {
+            var tz = ZoneId.of(id);
+            timezonesComboBox.addItem(new TZObject(tz));
+        } 
+    }
+
+    private final class TZObject {
+        private ZoneId id;
+
+        public TZObject(ZoneId id) {
+            this.id = id;
+        }
+
+        public ZoneId getId() {
+            return id;
+        }
+
+        @Override
+        public String toString() {
+            var now = ZonedDateTime.now(id);
+            return now.getOffset() + " " + id;
+        }
     }
 
     /**
@@ -32,6 +67,7 @@ public class TimezonesTab extends javax.swing.JPanel {
         addButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         timeZonesScrollPane = new javax.swing.JScrollPane();
+        timezonesPanel = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         resetButton = new javax.swing.JButton();
 
@@ -46,6 +82,11 @@ public class TimezonesTab extends javax.swing.JPanel {
 
         addButton.setMnemonic('a');
         addButton.setText("Add");
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addActionPerformed(evt);
+            }
+        });
         jPanel5.add(addButton);
 
         jPanel2.add(jPanel5);
@@ -54,13 +95,21 @@ public class TimezonesTab extends javax.swing.JPanel {
         jPanel3.setPreferredSize(new java.awt.Dimension(420, 44));
         jPanel3.setRequestFocusEnabled(false);
         jPanel3.setLayout(new java.awt.CardLayout());
+
+        timezonesPanel.setLayout(new javax.swing.BoxLayout(timezonesPanel, javax.swing.BoxLayout.PAGE_AXIS));
+        timeZonesScrollPane.setViewportView(timezonesPanel);
+
         jPanel3.add(timeZonesScrollPane, "card2");
 
         jPanel2.add(jPanel3);
 
         resetButton.setMnemonic('r');
         resetButton.setText("Reset");
-        resetButton.setToolTipText("");
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetButtonActionPerformed(evt);
+            }
+        });
         jPanel4.add(resetButton);
 
         jPanel2.add(jPanel4);
@@ -68,6 +117,96 @@ public class TimezonesTab extends javax.swing.JPanel {
         add(jPanel2);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void addActionPerformed(ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
+        var tz = (TZObject) timezonesComboBox.getSelectedItem();
+        timezonesPanel.add(new TimeZonePanel(tz));
+        timezonesPanel.revalidate();
+
+        var bar = timeZonesScrollPane.getVerticalScrollBar();
+        SwingUtilities.invokeLater(() -> {
+            bar.setValue(bar.getMaximum());
+        });
+    }//GEN-LAST:event_addActionPerformed
+
+    private void resetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        timers.values().stream().forEach((t) -> {
+            t.cancel();
+        });
+        timers.clear();
+        timezonesPanel.removeAll();
+        timezonesPanel.repaint();
+    }//GEN-LAST:event_resetButtonActionPerformed
+
+    private final class TimeZonePanel extends JPanel {
+        private final JLabel timeLabel;
+        private final JLabel tzLabel;
+        private final JButton removeButton;
+        private final TZObject tz;
+
+        public TimeZonePanel(TZObject tz) {
+            this.tz = tz;
+
+            setAlignmentX(0.0F);
+            setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+
+            tzLabel = new JLabel();
+            tzLabel.setText(tz.toString());
+            add(tzLabel);
+
+            var filler2 = new Box.Filler(new Dimension(20, 0), new Dimension(20, 0), new Dimension(20, 0));
+            add(filler2);
+
+            timeLabel = new JLabel();
+            timeLabel.setText("00:00:00");
+            add(timeLabel);
+
+            var filler1 = new Box.Filler(new Dimension(0, 0), new Dimension(0, 0), new Dimension(10000, 0));
+            add(filler1);
+
+            removeButton = new JButton();
+            removeButton.setIcon(new ImageIcon(getClass().getResource("/resources/remove.png"))); // NOI18N
+            removeButton.setToolTipText("Remove");
+            removeButton.setBorderPainted(false);
+            removeButton.setContentAreaFilled(false);
+            removeButton.setFocusPainted(false);
+            removeButton.addActionListener(this::removeButtonActionPerformed);
+            add(removeButton);
+
+            timers.put(tz.toString(), addTimer());
+        }
+
+        private Timer addTimer() {
+            var timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                ZonedDateTime now = ZonedDateTime.now(tz.getId());
+                private TimeUnits time = new TimeUnits(now.getHour(), now.getMinute(), now.getSecond(), 0);
+                {
+                    time.setFormat("%02d%c%02d%c%02d");
+                }
+
+                @Override
+                public void run() {
+                    SwingUtilities.invokeLater(() -> {
+                        timeLabel.setText(time.toString());
+                    });
+                    time.advanceSecond();
+                }
+            }, 0, 1000);
+
+            return timer;
+        }
+
+        private void removeButtonActionPerformed(ActionEvent evt) {
+            var parent = getParent();
+            if (parent != null) {
+                timers.remove(tz.toString());
+                
+                parent.remove(this);
+                parent.revalidate();
+                parent.repaint();
+            }
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
@@ -77,6 +216,7 @@ public class TimezonesTab extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JButton resetButton;
     private javax.swing.JScrollPane timeZonesScrollPane;
-    private javax.swing.JComboBox<String> timezonesComboBox;
+    private javax.swing.JComboBox<TZObject> timezonesComboBox;
+    private javax.swing.JPanel timezonesPanel;
     // End of variables declaration//GEN-END:variables
 }

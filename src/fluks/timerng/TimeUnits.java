@@ -163,6 +163,16 @@ public class TimeUnits {
         return this;
     }
 
+    public TimeUnits advanceSecond() {
+        stepOneSecond();
+        return this;
+    }
+
+    public TimeUnits advanceMinute() {
+        stepOneMinute();
+        return this;
+    }
+
     /**
      * @return Format string to use in {@link #toString() toString}.
      */
@@ -212,13 +222,14 @@ public class TimeUnits {
      */
     @Override
     public String toString() {
-        return String.format(
-            format,
-            hours,   delimiter,
-            minutes, delimiter,
-            seconds, delimiter,
-            milliseconds
-        );
+        var n = format.split("%").length;
+        return switch (n) {
+            case 1: yield String.format(format, hours);
+            case 3: yield String.format(format, hours, delimiter, minutes);
+            case 5: yield String.format(format, hours, delimiter, minutes, delimiter, seconds);
+            case 7:
+            default: yield String.format(format, hours, delimiter, minutes, delimiter, seconds, delimiter, milliseconds);
+        };
     }
 
     /** Set time to zero.
@@ -226,7 +237,7 @@ public class TimeUnits {
      */
     public TimeUnits reset() {
         return setHours(HOURS_MIN).setMinutes(MINUTES_MIN).
-            setSeconds(SECONDS_MIN).  setMilliseconds(MILLISECONDS_MIN);
+            setSeconds(SECONDS_MIN).setMilliseconds(MILLISECONDS_MIN);
     }
 
     /** Get time in milliseconds.
