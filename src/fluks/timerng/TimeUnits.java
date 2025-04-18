@@ -22,6 +22,10 @@ public class TimeUnits {
     private char delimiter = ':';
     private String format = "%02d%c%02d%c%02d%c%03d";
 
+    private static final long MS_IN_HOUR = 1000 * 60 * 60;
+    private static final long MS_IN_MINUTE = 1000 * 60;
+    private static final long MS_IN_SECOND = 1000;
+
     /** Initialize TimeUnits object having zero in all its time units.
      */
     public TimeUnits() {
@@ -47,6 +51,33 @@ public class TimeUnits {
         this.seconds = seconds;
         isMillisecondssValid(milliseconds);
         this.milliseconds = milliseconds;
+    }
+
+    public TimeUnits(long ms) throws IllegalArgumentException {
+        if (ms < 0) {
+            throw new IllegalArgumentException("ms can't be negative");
+        }
+
+        var _hours = (int) (ms / MS_IN_HOUR);
+        ms -= _hours * MS_IN_HOUR;
+        var _minutes = (int) (ms / MS_IN_MINUTE);
+        ms -= _minutes * MS_IN_MINUTE;
+        var _seconds = (int) (ms / MS_IN_SECOND);
+        ms -= _seconds * MS_IN_SECOND;
+
+        this.hours = _hours;
+        isMinutesValid(_minutes);
+        this.minutes = _minutes;
+        isSecondssValid(_seconds);
+        this.seconds = _seconds;
+        var _ms = (int) ms;
+        isMillisecondssValid(_ms);
+        this.milliseconds = _ms;
+    }
+
+    public TimeUnits copy() {
+        return new TimeUnits(hours, minutes, seconds, milliseconds).
+            setFormat(format).setDelimiter(delimiter);
     }
 
     /**

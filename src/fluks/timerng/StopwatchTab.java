@@ -1,17 +1,31 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package fluks.timerng;
+
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 /**
  *
- * @author jukka
  */
-public class StopwatchTab extends javax.swing.JPanel {
+public class StopwatchTab extends JPanel {
+    private Timer timer;
+    private volatile TimeUnits time;
+    private static final long NOT_RUNNING = -1;
+    private long lastLapInMS = NOT_RUNNING;
 
     /**
-     * Creates new form TimerTab
      */
     public StopwatchTab() {
         initComponents();
@@ -26,72 +40,68 @@ public class StopwatchTab extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        volumeLabel = new javax.swing.JLabel();
-        volumeSlider = new javax.swing.JSlider();
-        muteCheckBox = new javax.swing.JCheckBox();
-        jPanel2 = new javax.swing.JPanel();
-        timeLabel = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jPanel4 = new javax.swing.JPanel();
-        startStopButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        resetButton = new javax.swing.JButton();
+        jPanel2 = new JPanel();
+        timeLabel = new JLabel();
+        jPanel3 = new JPanel();
+        scrollPane = new JScrollPane();
+        lapsPanel = new JPanel();
+        jPanel4 = new JPanel();
+        startStopButton = new JButton();
+        lapButton = new JButton();
+        resetButton = new JButton();
 
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 1, 20, 1));
-        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.X_AXIS));
+        setBorder(BorderFactory.createEmptyBorder(20, 1, 20, 1));
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
-        jPanel1.setAutoscrolls(true);
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        jPanel2.setLayout(new BoxLayout(jPanel2, BoxLayout.Y_AXIS));
 
-        volumeLabel.setDisplayedMnemonic('v');
-        volumeLabel.setLabelFor(volumeSlider);
-        volumeLabel.setText("Volume");
-        volumeLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 20, 1));
-        jPanel1.add(volumeLabel);
-
-        volumeSlider.setOrientation(javax.swing.JSlider.VERTICAL);
-        volumeSlider.setMaximumSize(new java.awt.Dimension(32767, 32767));
-        jPanel1.add(volumeSlider);
-
-        muteCheckBox.setMnemonic('m');
-        muteCheckBox.setText("Mute");
-        jPanel1.add(muteCheckBox);
-
-        add(jPanel1);
-
-        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
-
-        timeLabel.setFont(new java.awt.Font("Dialog", 1, 70)); // NOI18N
-        timeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        timeLabel.setText("00:00:00");
+        timeLabel.setFont(new Font("Dialog", 1, 70)); // NOI18N
+        timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        timeLabel.setText("00:00:00:000");
         timeLabel.setAlignmentX(0.5F);
-        timeLabel.setMaximumSize(new java.awt.Dimension(39999, 420));
-        timeLabel.setPreferredSize(new java.awt.Dimension(42000, 96));
+        timeLabel.setMaximumSize(new Dimension(39999, 420));
+        timeLabel.setPreferredSize(new Dimension(42000, 96));
         jPanel2.add(timeLabel);
 
-        jPanel3.setMinimumSize(new java.awt.Dimension(67, 32));
-        jPanel3.setPreferredSize(new java.awt.Dimension(420, 44));
+        jPanel3.setMinimumSize(new Dimension(67, 32));
+        jPanel3.setPreferredSize(new Dimension(420, 44));
         jPanel3.setRequestFocusEnabled(false);
-        jPanel3.setLayout(new java.awt.CardLayout());
+        jPanel3.setLayout(new CardLayout());
 
-        jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createTitledBorder("Laps"));
-        jPanel3.add(jScrollPane1, "card2");
+        scrollPane.setViewportBorder(BorderFactory.createTitledBorder("Laps"));
+
+        lapsPanel.setLayout(new BoxLayout(lapsPanel, BoxLayout.PAGE_AXIS));
+        scrollPane.setViewportView(lapsPanel);
+
+        jPanel3.add(scrollPane, "card2");
 
         jPanel2.add(jPanel3);
 
         startStopButton.setMnemonic('s');
         startStopButton.setText("Start / Stop");
+        startStopButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                startStopButtonActionPerformed(evt);
+            }
+        });
         jPanel4.add(startStopButton);
 
-        jButton1.setMnemonic('l');
-        jButton1.setText("Lap");
-        jPanel4.add(jButton1);
+        lapButton.setMnemonic('l');
+        lapButton.setText("Lap");
+        lapButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                lapButtonActionPerformed(evt);
+            }
+        });
+        jPanel4.add(lapButton);
 
         resetButton.setMnemonic('r');
         resetButton.setText("Reset");
-        resetButton.setToolTipText("");
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                resetButtonActionPerformed(evt);
+            }
+        });
         jPanel4.add(resetButton);
 
         jPanel2.add(jPanel4);
@@ -99,19 +109,77 @@ public class StopwatchTab extends javax.swing.JPanel {
         add(jPanel2);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void lapButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_lapButtonActionPerformed
+        if (timer != null) {
+            var now = time.timeInMilliseconds();
+            long lap;
+            if (lastLapInMS != NOT_RUNNING) {
+                lap = now - lastLapInMS;
+            }
+            else {
+                lap = now;
+            }
+            lastLapInMS = now;
+            var label = new JLabel();
+            label.setText((new TimeUnits(lap)).toString());
+            lapsPanel.add(label);
+            lapsPanel.revalidate();
+            lapsPanel.repaint();
+
+            var bar = scrollPane.getVerticalScrollBar();
+            SwingUtilities.invokeLater(() -> {
+                bar.setValue(bar.getMaximum());
+            });
+        }
+    }//GEN-LAST:event_lapButtonActionPerformed
+
+    private void resetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+            time = null;
+            lastLapInMS = NOT_RUNNING;
+        }
+        timeLabel.setText("00:00:00:000");
+        lapsPanel.removeAll();
+        lapsPanel.revalidate();
+        lapsPanel.repaint();
+    }//GEN-LAST:event_resetButtonActionPerformed
+
+    private void startStopButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
+        if (timer == null) {
+            timer = new Timer();
+            time = new TimeUnits();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    time.advance();
+                    SwingUtilities.invokeLater(() -> {
+                        timeLabel.setText(time.toString());
+                    });
+                }
+            }, 1, 1);
+        }
+        else {
+            lapButtonActionPerformed(null);
+
+            timer.cancel();
+            timer = null;
+            time = new TimeUnits();
+            lastLapInMS = NOT_RUNNING;
+        }
+    }//GEN-LAST:event_startStopButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JCheckBox muteCheckBox;
-    private javax.swing.JButton resetButton;
-    private javax.swing.JButton startStopButton;
-    private javax.swing.JLabel timeLabel;
-    private javax.swing.JLabel volumeLabel;
-    private javax.swing.JSlider volumeSlider;
+    private JPanel jPanel2;
+    private JPanel jPanel3;
+    private JPanel jPanel4;
+    private JButton lapButton;
+    private JPanel lapsPanel;
+    private JButton resetButton;
+    private JScrollPane scrollPane;
+    private JButton startStopButton;
+    private JLabel timeLabel;
     // End of variables declaration//GEN-END:variables
 }

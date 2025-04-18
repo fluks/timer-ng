@@ -16,7 +16,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
-import javax.swing.JPanel;
 
 public class GUI extends javax.swing.JFrame {
     final private TimeUnits time = new TimeUnits();
@@ -36,8 +35,8 @@ public class GUI extends javax.swing.JFrame {
         initComponents();
         jTabbedPane1.addTab("Timer2", new TimerTab());
         jTabbedPane1.addTab("Alarm2", new AlarmTab());
-        jTabbedPane1.addTab("Stopwatch2", new StopwatchTab());
-        jTabbedPane1.addTab("TimezonesTab", new TimezonesTab());
+        jTabbedPane1.addTab("Stopwatch", new StopwatchTab());
+        jTabbedPane1.addTab("Timezones", new TimezonesTab());
         URL iconURL = getClass().getResource(ICON_FILE);
         this.setIconImage(new ImageIcon(iconURL).getImage());
         this.setTitle(PROGRAM_NAME);
@@ -129,17 +128,6 @@ public class GUI extends javax.swing.JFrame {
         HourSelectorSpinner = new javax.swing.JSpinner();
         MinuteSelectorSpinner = new javax.swing.JSpinner();
         SecondSelectorSpinner = new javax.swing.JSpinner();
-        StopwatchPanel = new javax.swing.JPanel();
-        VolumePanel2 = new javax.swing.JPanel();
-        volumeLabel2 = new javax.swing.JLabel();
-        volumeSlider2 = new javax.swing.JSlider();
-        muteCheckbox2 = new javax.swing.JCheckBox();
-        CurrentTimeLabel1 = new javax.swing.JLabel();
-        ButtonPanel2 = new javax.swing.JPanel();
-        startStopButton2 = new javax.swing.JButton();
-        resetButton2 = new javax.swing.JButton();
-        LapButton = new javax.swing.JButton();
-        LapPane = new javax.swing.JScrollPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         quitMenuItem = new javax.swing.JMenuItem();
@@ -323,7 +311,7 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(startStopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40)
                 .addComponent(resetButton, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
         ButtonPanelLayout.setVerticalGroup(
             ButtonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -448,7 +436,7 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(ButtonPanel1Layout.createSequentialGroup()
                 .addGap(45, 45, 45)
                 .addComponent(startStopButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
                 .addComponent(resetButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(45, 45, 45))
         );
@@ -539,138 +527,6 @@ public class GUI extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Alarm", AlarmPanel);
 
-        volumeLabel2.setFont(new java.awt.Font("Noto Sans", 0, 18)); // NOI18N
-        volumeLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        volumeLabel2.setLabelFor(volumeSlider);
-        volumeLabel2.setText("Volume");
-        volumeLabel2.setToolTipText("");
-        volumeLabel2.setAlignmentX(0.5F);
-
-        volumeSlider2.setOrientation(javax.swing.JSlider.VERTICAL);
-        volumeSlider2.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                volumeSlider2StateChanged(evt);
-            }
-        });
-
-        muteCheckbox2.setMnemonic('m');
-        muteCheckbox2.setText("Mute");
-        muteCheckbox2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        muteCheckbox2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                muteCheckbox2ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout VolumePanel2Layout = new javax.swing.GroupLayout(VolumePanel2);
-        VolumePanel2.setLayout(VolumePanel2Layout);
-        VolumePanel2Layout.setHorizontalGroup(
-            VolumePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(VolumePanel2Layout.createSequentialGroup()
-                .addGroup(VolumePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(volumeLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(VolumePanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(VolumePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(volumeSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(muteCheckbox2, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE))))
-                .addContainerGap())
-        );
-        VolumePanel2Layout.setVerticalGroup(
-            VolumePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(VolumePanel2Layout.createSequentialGroup()
-                .addComponent(volumeLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(volumeSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(muteCheckbox2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        CurrentTimeLabel1.setFont(new java.awt.Font("Dialog", 1, 52)); // NOI18N
-        CurrentTimeLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        CurrentTimeLabel1.setText("00:00:00");
-        CurrentTimeLabel1.setToolTipText("");
-
-        startStopButton2.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        startStopButton2.setMnemonic('s');
-        startStopButton2.setText("Start/Stop");
-        startStopButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                startStopButton2ActionPerformed(evt);
-            }
-        });
-
-        resetButton2.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        resetButton2.setMnemonic('r');
-        resetButton2.setText("Reset");
-        resetButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resetButton2ActionPerformed(evt);
-            }
-        });
-
-        LapButton.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        LapButton.setMnemonic('l');
-        LapButton.setText("Lap");
-        LapButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                LapButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout ButtonPanel2Layout = new javax.swing.GroupLayout(ButtonPanel2);
-        ButtonPanel2.setLayout(ButtonPanel2Layout);
-        ButtonPanel2Layout.setHorizontalGroup(
-            ButtonPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ButtonPanel2Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addComponent(startStopButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(LapButton, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(resetButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45))
-        );
-        ButtonPanel2Layout.setVerticalGroup(
-            ButtonPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ButtonPanel2Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addGroup(ButtonPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(startStopButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(resetButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LapButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
-        );
-
-        LapPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        LapPane.setViewportBorder(javax.swing.BorderFactory.createTitledBorder(null, "Laps", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Ubuntu", 0, 14))); // NOI18N
-
-        javax.swing.GroupLayout StopwatchPanelLayout = new javax.swing.GroupLayout(StopwatchPanel);
-        StopwatchPanel.setLayout(StopwatchPanelLayout);
-        StopwatchPanelLayout.setHorizontalGroup(
-            StopwatchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(StopwatchPanelLayout.createSequentialGroup()
-                .addComponent(VolumePanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(StopwatchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(CurrentTimeLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ButtonPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 393, Short.MAX_VALUE)
-                    .addComponent(LapPane))
-                .addContainerGap())
-        );
-        StopwatchPanelLayout.setVerticalGroup(
-            StopwatchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(VolumePanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(StopwatchPanelLayout.createSequentialGroup()
-                .addComponent(CurrentTimeLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(LapPane)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ButtonPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        jTabbedPane1.addTab("Stopwatch", StopwatchPanel);
-
         fileMenu.setMnemonic('f');
         fileMenu.setText("File");
 
@@ -710,26 +566,6 @@ public class GUI extends javax.swing.JFrame {
         beep.closeClip();
         System.exit(0);
     }//GEN-LAST:event_quitMenuItemActionPerformed
-
-    private void LapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LapButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_LapButtonActionPerformed
-
-    private void resetButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_resetButton2ActionPerformed
-
-    private void startStopButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startStopButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_startStopButton2ActionPerformed
-
-    private void muteCheckbox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_muteCheckbox2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_muteCheckbox2ActionPerformed
-
-    private void volumeSlider2StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_volumeSlider2StateChanged
-        // TODO add your handling code here:
-    }//GEN-LAST:event_volumeSlider2StateChanged
 
     private void SecondSelectorSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_SecondSelectorSpinnerStateChanged
         // TODO add your handling code here:
@@ -978,21 +814,15 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JPanel AlarmPanel;
     private javax.swing.JPanel ButtonPanel;
     private javax.swing.JPanel ButtonPanel1;
-    private javax.swing.JPanel ButtonPanel2;
     private javax.swing.JLabel CurrentTimeLabel;
-    private javax.swing.JLabel CurrentTimeLabel1;
     private javax.swing.JSpinner HourSelectorSpinner;
-    private javax.swing.JButton LapButton;
-    private javax.swing.JScrollPane LapPane;
     private javax.swing.JSpinner MinuteSelectorSpinner;
     private javax.swing.JSpinner SecondSelectorSpinner;
-    private javax.swing.JPanel StopwatchPanel;
     private javax.swing.JPanel TimePickerPanel;
     private javax.swing.JPanel TimePickerPanel1;
     private javax.swing.JPanel TimerPanel;
     private javax.swing.JPanel VolumePanel;
     private javax.swing.JPanel VolumePanel1;
-    private javax.swing.JPanel VolumePanel2;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JSpinner hourSpinner;
     private javax.swing.JCheckBox intervalCheckbox;
@@ -1009,21 +839,16 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JSpinner minuteSpinner;
     private javax.swing.JCheckBox muteCheckbox;
     private javax.swing.JCheckBox muteCheckbox1;
-    private javax.swing.JCheckBox muteCheckbox2;
     private javax.swing.JMenuItem quitMenuItem;
     private javax.swing.JButton resetButton;
     private javax.swing.JButton resetButton1;
-    private javax.swing.JButton resetButton2;
     private javax.swing.JSpinner secondSpinner;
     private javax.swing.JButton startStopButton;
     private javax.swing.JButton startStopButton1;
-    private javax.swing.JButton startStopButton2;
     private javax.swing.JLabel timeLabel;
     private javax.swing.JLabel volumeLabel;
     private javax.swing.JLabel volumeLabel1;
-    private javax.swing.JLabel volumeLabel2;
     private javax.swing.JSlider volumeSlider;
     private javax.swing.JSlider volumeSlider1;
-    private javax.swing.JSlider volumeSlider2;
     // End of variables declaration//GEN-END:variables
 }
