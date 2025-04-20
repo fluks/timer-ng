@@ -1,20 +1,14 @@
 package fluks.timerng;
 
-import fluks.timerng.sound.NoSound;
-import fluks.timerng.sound.Beep;
-import fluks.timerng.sound.AbstractClipWrapper;
-import fluks.timerng.sound.Alarm;
+import fluks.timerng.Global.Sound;
 import java.awt.Color;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Window;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 
 public class GUI extends javax.swing.JFrame {
@@ -24,10 +18,7 @@ public class GUI extends javax.swing.JFrame {
     private Timer timeLabelFlashTimer = null;
     private final Color timeLabelFg;
     private boolean timerIsRunning = false;
-    private AbstractClipWrapper beep = new Beep();
-    private AbstractClipWrapper alarm = new Alarm();
-    private static final String BEEP_FILE = "/resources/beep.wav";
-    private static final String ALARM_FILE = "/resources/alarm.wav";
+    private final Sound sound;
     private static final String ICON_FILE = "/resources/icon.png";
     private static final String PROGRAM_NAME = "Timer-ng";
 
@@ -44,43 +35,7 @@ public class GUI extends javax.swing.JFrame {
         setLocation(getScreenCenterForWindow((Window) this));
         getRootPane().setDefaultButton(startStopButton);
         timeLabelFg = timeLabel.getForeground();
-
-        beep = loadSound(beep, BEEP_FILE);
-        alarm = loadSound(alarm, ALARM_FILE);
-
-        if ((beep instanceof NoSound) && (alarm instanceof NoSound)) {
-            volumeSlider.setEnabled(false);
-            muteCheckbox.setEnabled(false);
-        }
-
-        alarm.setVolume(getSliderMiddle(volumeSlider),
-            getSlideRange(volumeSlider));
-        beep.setVolume(getSliderMiddle(volumeSlider),
-            getSlideRange(volumeSlider));
-    }
-
-    /** Load a sound object by opening a clip for it.
-     * @param cw An object, which clip will be opened.
-     * @param resource A path to resource. cw opens a clip to this resource.
-     * @return An object, which clip is opened to the resource, or if something
-     * fails, a {@link fi.fluks.NoSound NoSound} instance, which doesn't do
-     * anything.
-     */
-    private AbstractClipWrapper loadSound(AbstractClipWrapper cw,
-        String resource) {
-        try (InputStream is = getClass().getResourceAsStream(resource)) {
-            if (is == null)
-                throw new Exception("Can't get system resource, " + resource);
-            cw.openClip(is);
-        }
-        catch (Exception e) {
-            cw.closeClip();
-            JOptionPane.showMessageDialog(this,
-                "Failed to load audio.\n\n" + e.getMessage());
-            cw = new NoSound();
-        }
-
-        return cw;
+        sound = Global.getSoundInstance();
     }
 
     /**
@@ -562,8 +517,8 @@ public class GUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void quitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitMenuItemActionPerformed
-        alarm.closeClip();
-        beep.closeClip();
+        sound.getAlarm().closeClip();
+        sound.getBeep().closeClip();
         System.exit(0);
     }//GEN-LAST:event_quitMenuItemActionPerformed
 
@@ -597,7 +552,7 @@ public class GUI extends javax.swing.JFrame {
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         if (timer != null)
-        timer.cancel();
+            timer.cancel();
         if (timeLabelFlashTimer != null) {
             timeLabelFlashTimer.cancel();
             timeLabelFlashTimer = null;
@@ -612,7 +567,7 @@ public class GUI extends javax.swing.JFrame {
         secondSpinner.setValue(0);
         millisecondSpinner.setValue(0);
         setSpinnersEnabled(true);
-        alarm.stopAndRewind();
+//        alarm.stopAndRewind();
         enableIntervalIfTargetTimeIsSet();
     }//GEN-LAST:event_resetButtonActionPerformed
 
@@ -635,7 +590,7 @@ public class GUI extends javax.swing.JFrame {
                             !isIntervalSelected &&
                             TimeUnits.timeUnitsAreEqual(time, targetTime)) {
                             timer.cancel();
-                            alarm.play();
+//                            alarm.play();
                             timeLabelFlashTimer = flashTime(timeLabelFlashTimer);
 
                             intervalCheckbox.setEnabled(true);
@@ -649,7 +604,7 @@ public class GUI extends javax.swing.JFrame {
                         if (isIntervalSelected &&
                             targetTime.timeInMilliseconds() != 0 &&
                             time.mod(targetTime) == 0) {
-                            beep.play();
+//                            beep.play();
                         }
                     });
                 }
@@ -662,7 +617,7 @@ public class GUI extends javax.swing.JFrame {
                 timeLabelFlashTimer = null;
             }
             timerIsRunning = false;
-            alarm.stopAndRewind();
+//            alarm.stopAndRewind();
 
             setSpinnersEnabled(true);
             enableIntervalIfTargetTimeIsSet();
@@ -672,24 +627,24 @@ public class GUI extends javax.swing.JFrame {
 
     private void muteCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_muteCheckboxActionPerformed
         if (muteCheckbox.isSelected()) {
-            alarm.mute(true);
-            beep.mute(true);
+//            alarm.mute(true);
+//            beep.mute(true);
         }
         else {
-            alarm.mute(false);
-            beep.mute(false);
+//            alarm.mute(false);
+//            beep.mute(false);
         }
     }//GEN-LAST:event_muteCheckboxActionPerformed
 
     private void volumeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
         int volume = volumeSlider.getValue();
-        beep.setVolume(volume, getSlideRange(volumeSlider));
-        alarm.setVolume(volume, getSlideRange(volumeSlider));
+//        beep.setVolume(volume, getSlideRange(volumeSlider));
+//        alarm.setVolume(volume, getSlideRange(volumeSlider));
 
         if (muteCheckbox.isSelected()) {
             muteCheckbox.setSelected(false);
-            beep.mute(false);
-            alarm.mute(false);
+//            beep.mute(false);
+//            alarm.mute(false);
         }
     }//GEN-LAST:event_volumeSliderStateChanged
 
@@ -772,22 +727,6 @@ public class GUI extends javax.swing.JFrame {
         }
     }
     
-    /** Get range of the slider. |slider.max - slider.min|.
-     * @param slider
-     * @return The range of the slider.
-     */
-    private static int getSlideRange(JSlider slider) {
-        return Math.abs(slider.getMaximum() - slider.getMinimum());
-    }
-
-    /** Get middle value of a slider component.
-     * @param slider
-     * @return
-     */
-    private static int getSliderMiddle(JSlider slider) {
-        return (slider.getMaximum() - slider.getMinimum()) / 2;
-    }
-
     /** Calculate such a point for a window, that when positioned on that
      * point, the window will be in the center of the screen.
      * @return Point for centering a window.
