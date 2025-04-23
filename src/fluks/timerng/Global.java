@@ -13,6 +13,7 @@ import javax.swing.JSlider;
 class Global {
     private static Settings settings;
     private static Sound sound;
+    public static final String PROGRAM_NAME = "Timer-ng";
 
     public record AlarmTab(int volume, boolean muted, List<Map<TimeUnits, TimeUnits>> alarms) {}
     public record TimerTab(int volume, boolean muted, boolean interval, TimeUnits time, TimeUnits timer) {}

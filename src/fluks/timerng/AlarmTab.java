@@ -1,20 +1,40 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package fluks.timerng;
 
-/**
- *
- * @author jukka
- */
-public class AlarmTab extends javax.swing.JPanel {
+import fluks.swing.utils.SwingUtils;
+import fluks.timerng.sound.AbstractClipWrapper;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-    /**
-     * Creates new form TimerTab
-     */
+public class AlarmTab extends JPanel {
+    private LocalDateTime targetTime;
+    private Timer timer;
+    private AbstractClipWrapper alarm;
+
     public AlarmTab() {
         initComponents();
+        infoPanel.setVisible(false);
+
+        alarm = Global.getSoundInstance().getAlarm();
+        targetTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
     }
 
     /**
@@ -25,125 +45,159 @@ public class AlarmTab extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
+        GridBagConstraints gridBagConstraints;
 
-        jPanel1 = new javax.swing.JPanel();
-        volumeLabel = new javax.swing.JLabel();
-        volumeSlider = new javax.swing.JSlider();
-        muteCheckBox = new javax.swing.JCheckBox();
-        jPanel2 = new javax.swing.JPanel();
-        timeLabel = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        hoursLabel = new javax.swing.JLabel();
-        hoursSpinner = new javax.swing.JSpinner();
-        minutesLabel = new javax.swing.JLabel();
-        minutesSpinner = new javax.swing.JSpinner();
-        secondsLabel = new javax.swing.JLabel();
-        secondsSpinner = new javax.swing.JSpinner();
-        jPanel4 = new javax.swing.JPanel();
-        startStopButton = new javax.swing.JButton();
-        resetButton = new javax.swing.JButton();
+        jPanel1 = new JPanel();
+        volumeLabel = new JLabel();
+        volumeSlider = new JSlider();
+        muteCheckBox = new JCheckBox();
+        jPanel2 = new JPanel();
+        jPanel3 = new JPanel();
+        hoursLabel = new JLabel();
+        hoursSpinner = new JSpinner();
+        minutesLabel = new JLabel();
+        minutesSpinner = new JSpinner();
+        secondsLabel = new JLabel();
+        secondsSpinner = new JSpinner();
+        infoPanel = new JPanel();
+        remainingLabel = new JLabel();
+        timeRemainingLabel = new JLabel();
+        jPanel4 = new JPanel();
+        startStopButton = new JButton();
+        resetButton = new JButton();
 
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 1, 20, 1));
-        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.X_AXIS));
+        setBorder(BorderFactory.createEmptyBorder(20, 1, 20, 1));
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
         jPanel1.setAutoscrolls(true);
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        jPanel1.setLayout(new BoxLayout(jPanel1, BoxLayout.Y_AXIS));
 
         volumeLabel.setDisplayedMnemonic('v');
         volumeLabel.setLabelFor(volumeSlider);
         volumeLabel.setText("Volume");
-        volumeLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 20, 1));
+        volumeLabel.setBorder(BorderFactory.createEmptyBorder(1, 1, 20, 1));
         jPanel1.add(volumeLabel);
 
-        volumeSlider.setOrientation(javax.swing.JSlider.VERTICAL);
-        volumeSlider.setMaximumSize(new java.awt.Dimension(32767, 32767));
+        volumeSlider.setOrientation(JSlider.VERTICAL);
+        volumeSlider.setMaximumSize(new Dimension(32767, 32767));
+        volumeSlider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                volumeSliderStateChanged(evt);
+            }
+        });
         jPanel1.add(volumeSlider);
 
         muteCheckBox.setMnemonic('m');
         muteCheckBox.setText("Mute");
+        muteCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                muteCheckBoxActionPerformed(evt);
+            }
+        });
         jPanel1.add(muteCheckBox);
 
         add(jPanel1);
 
-        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
+        jPanel2.setLayout(new BoxLayout(jPanel2, BoxLayout.PAGE_AXIS));
 
-        timeLabel.setFont(new java.awt.Font("Dialog", 1, 70)); // NOI18N
-        timeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        timeLabel.setText("00:00:00");
-        timeLabel.setAlignmentX(0.5F);
-        timeLabel.setMaximumSize(new java.awt.Dimension(39999, 420));
-        timeLabel.setPreferredSize(new java.awt.Dimension(42000, 96));
-        jPanel2.add(timeLabel);
-
-        jPanel3.setMinimumSize(new java.awt.Dimension(67, 32));
-        jPanel3.setPreferredSize(new java.awt.Dimension(420, 44));
+        jPanel3.setMinimumSize(new Dimension(67, 32));
+        jPanel3.setPreferredSize(new Dimension(420, 44));
         jPanel3.setRequestFocusEnabled(false);
-        jPanel3.setLayout(new java.awt.GridBagLayout());
+        jPanel3.setLayout(new GridBagLayout());
 
         hoursLabel.setDisplayedMnemonic('h');
         hoursLabel.setLabelFor(hoursSpinner);
         hoursLabel.setText("Hours");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 13;
         gridBagConstraints.ipady = 16;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
         jPanel3.add(hoursLabel, gridBagConstraints);
 
-        hoursSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        hoursSpinner.setModel(new SpinnerNumberModel(0, 0, 23, 1));
+        hoursSpinner.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                hoursSpinnerStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         jPanel3.add(hoursSpinner, gridBagConstraints);
 
         minutesLabel.setDisplayedMnemonic('m');
         minutesLabel.setLabelFor(minutesSpinner);
         minutesLabel.setText("Minutes");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 13;
         gridBagConstraints.ipady = 16;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
         jPanel3.add(minutesLabel, gridBagConstraints);
 
-        minutesSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 59, 1));
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        minutesSpinner.setModel(new SpinnerNumberModel(0, 0, 59, 1));
+        minutesSpinner.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                minutesSpinnerStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         jPanel3.add(minutesSpinner, gridBagConstraints);
 
         secondsLabel.setDisplayedMnemonic('e');
         secondsLabel.setLabelFor(secondsSpinner);
         secondsLabel.setText("Seconds");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 13;
         gridBagConstraints.ipady = 16;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
         jPanel3.add(secondsLabel, gridBagConstraints);
 
-        secondsSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 59, 1));
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        secondsSpinner.setModel(new SpinnerNumberModel(0, 0, 59, 1));
+        secondsSpinner.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                secondsSpinnerStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         jPanel3.add(secondsSpinner, gridBagConstraints);
 
         jPanel2.add(jPanel3);
 
+        remainingLabel.setText("Remaining");
+        infoPanel.add(remainingLabel);
+        infoPanel.add(timeRemainingLabel);
+
+        jPanel2.add(infoPanel);
+
         startStopButton.setMnemonic('s');
         startStopButton.setText("Start / Stop");
+        startStopButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                startStopButtonActionPerformed(evt);
+            }
+        });
         jPanel4.add(startStopButton);
 
         resetButton.setMnemonic('r');
         resetButton.setText("Reset");
-        resetButton.setToolTipText("");
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                resetButtonActionPerformed(evt);
+            }
+        });
         jPanel4.add(resetButton);
 
         jPanel2.add(jPanel4);
@@ -151,23 +205,92 @@ public class AlarmTab extends javax.swing.JPanel {
         add(jPanel2);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void volumeSliderStateChanged(ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
+        alarm.setVolume(volumeSlider.getValue(), SwingUtils.getSliderRange(volumeSlider));
+    }//GEN-LAST:event_volumeSliderStateChanged
+
+    private void muteCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_muteCheckBoxActionPerformed
+        alarm.mute(muteCheckBox.isSelected());
+    }//GEN-LAST:event_muteCheckBoxActionPerformed
+
+    private void startStopButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
+        if (timer == null) {
+            alarm.stopAndRewind();
+            var currentTime = LocalDateTime.now();
+            if (targetTime.isBefore(currentTime)) {
+                targetTime = targetTime.plusDays(1);
+            }
+            infoPanel.setVisible(true);
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    var now = LocalDateTime.now();
+                    var diff = Duration.between(now, targetTime);
+                    if (diff.toMillis() < 1000) {
+                        SwingUtilities.invokeLater(() -> {
+                            timeRemainingLabel.setText("00:00:00");
+                        });
+                        alarm.play();
+                        timer.cancel();
+                        timer = null;
+                    }
+                    else {
+                        var remaining = String.format("%02d:%02d:%02d",
+                            diff.toHoursPart(), diff.toMinutesPart(), diff.toSecondsPart());
+                        SwingUtilities.invokeLater(() -> {
+                            timeRemainingLabel.setText(remaining);
+                        });
+                    }
+                }
+            }, 0, 1000);
+        }
+        else {
+            timer.cancel();
+            timer = null;
+        }
+    }//GEN-LAST:event_startStopButtonActionPerformed
+
+    private void resetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        hoursSpinner.setValue(0);
+        minutesSpinner.setValue(0);
+        secondsSpinner.setValue(0);
+        timeRemainingLabel.setText("");
+        infoPanel.setVisible(false);
+        alarm.stopAndRewind();
+    }//GEN-LAST:event_resetButtonActionPerformed
+
+    private void hoursSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_hoursSpinnerStateChanged
+        targetTime = targetTime.withHour((int) hoursSpinner.getValue());
+    }//GEN-LAST:event_hoursSpinnerStateChanged
+
+    private void minutesSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_minutesSpinnerStateChanged
+        targetTime = targetTime.withMinute((int) minutesSpinner.getValue());
+    }//GEN-LAST:event_minutesSpinnerStateChanged
+
+    private void secondsSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_secondsSpinnerStateChanged
+        targetTime = targetTime.withSecond((int) secondsSpinner.getValue());
+    }//GEN-LAST:event_secondsSpinnerStateChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel hoursLabel;
-    private javax.swing.JSpinner hoursSpinner;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JLabel minutesLabel;
-    private javax.swing.JSpinner minutesSpinner;
-    private javax.swing.JCheckBox muteCheckBox;
-    private javax.swing.JButton resetButton;
-    private javax.swing.JLabel secondsLabel;
-    private javax.swing.JSpinner secondsSpinner;
-    private javax.swing.JButton startStopButton;
-    private javax.swing.JLabel timeLabel;
-    private javax.swing.JLabel volumeLabel;
-    private javax.swing.JSlider volumeSlider;
+    private JLabel hoursLabel;
+    private JSpinner hoursSpinner;
+    private JPanel infoPanel;
+    private JPanel jPanel1;
+    private JPanel jPanel2;
+    private JPanel jPanel3;
+    private JPanel jPanel4;
+    private JLabel minutesLabel;
+    private JSpinner minutesSpinner;
+    private JCheckBox muteCheckBox;
+    private JLabel remainingLabel;
+    private JButton resetButton;
+    private JLabel secondsLabel;
+    private JSpinner secondsSpinner;
+    private JButton startStopButton;
+    private JLabel timeRemainingLabel;
+    private JLabel volumeLabel;
+    private JSlider volumeSlider;
     // End of variables declaration//GEN-END:variables
 }
