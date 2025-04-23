@@ -1,9 +1,9 @@
 package fluks.timerng;
 
+import fluks.swing.utils.SwingUtils;
 import fluks.timerng.sound.AbstractClipWrapper;
-import fluks.timerng.sound.Alarm;
-import fluks.timerng.sound.Beep;
 import fluks.timerng.sound.NoSound;
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -11,6 +11,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
@@ -47,13 +48,13 @@ public class TimerTab extends JPanel {
         var sound = Global.getSoundInstance();
         beep = sound.getBeep();
         alarm = sound.getAlarm();
-        volumeRange = Global.getSliderRange(volumeSlider);
+        volumeRange = SwingUtils.getSliderRange(volumeSlider);
         if ((beep instanceof NoSound) && (alarm instanceof NoSound)) {
             volumeSlider.setEnabled(false);
             muteCheckBox.setEnabled(false);
         }
         else {
-            var middle = Global.getSliderMiddle(volumeSlider);
+            var middle = SwingUtils.getSliderMiddle(volumeSlider);
             alarm.setVolume(middle, volumeRange);
             beep.setVolume(middle, volumeRange);
         }
@@ -274,7 +275,9 @@ public class TimerTab extends JPanel {
 
     private void resetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         muteCheckBox.setSelected(false);
+        muted = false;
         intervalCheckBox.setSelected(false);
+        interval = false;
         hoursSpinner.setValue(0);
         minutesSpinner.setValue(0);
         secondsSpinner.setValue(0);
@@ -294,10 +297,15 @@ public class TimerTab extends JPanel {
             timeLabel.setForeground(timeLabelFg);
         }
         alarm.stopAndRewind();
+        alarm.mute(false);
+        beep.mute(false);
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private void muteCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_muteCheckBoxActionPerformed
         muted = muteCheckBox.isSelected();
+        alarm.mute(muted);
+        beep.mute(muted);
+
     }//GEN-LAST:event_muteCheckBoxActionPerformed
 
     private void startStopButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
@@ -319,14 +327,22 @@ public class TimerTab extends JPanel {
                     SwingUtilities.invokeLater(() -> {
                         timeLabel.setText(time.toString());
                     });
-                    System.out.println(time.mod(target));
                     if (interval && time.mod(target) == 0 && !muted) {
                         beep.play();
                     }
                     else if (TimeUnits.timeUnitsAreEqual(time, target)) {
-                        if (!muted) {
-                            alarm.play();
-                        }
+                        alarm.play();
+                        SwingUtilities.invokeLater(() -> {
+                            try {
+                                SwingUtils.showDesktopNotification(
+                                        "Timer finished",
+                                        "Timer you set to " + target.toString() + " is finished.",
+                                        Global.PROGRAM_NAME,
+                                        null,
+                                        5000);
+                            } catch (MalformedURLException | AWTException ex) {
+                            }
+                        });
                         timer.cancel();
                         timerIsRunning = false;
                         flashTimeLabelTimer = flashTime(flashTimeLabelTimer);
