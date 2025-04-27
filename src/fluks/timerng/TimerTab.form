@@ -61,7 +61,7 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="muteCheckBox">
           <Properties>
-            <Property name="mnemonic" type="int" value="109"/>
+            <Property name="mnemonic" type="int" value="117"/>
             <Property name="text" type="java.lang.String" value="Mute"/>
           </Properties>
           <Events>

@@ -87,7 +87,7 @@ public class AlarmTab extends JPanel {
         });
         jPanel1.add(volumeSlider);
 
-        muteCheckBox.setMnemonic('m');
+        muteCheckBox.setMnemonic('u');
         muteCheckBox.setText("Mute");
         muteCheckBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
