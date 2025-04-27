@@ -1,11 +1,13 @@
 package fluks.swing.utils;
 
 import java.awt.AWTException;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
+import java.awt.Window;
 import java.io.IOException;
-import java.lang.foreign.Arena;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,7 +16,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
@@ -36,6 +37,15 @@ public class SwingUtils {
         return (slider.getMaximum() - slider.getMinimum()) / 2;
     }
 
+    /**
+     * @param title
+     * @param message
+     * @param appName
+     * @param icon
+     * @param expire
+     * @throws MalformedURLException
+     * @throws AWTException
+     */
     public static void showDesktopNotification(String title, String message, String appName, String icon, Integer expire) throws MalformedURLException, AWTException {
         title = title != null ? title : "";
         message = message != null ? message : "";
@@ -84,7 +94,12 @@ public class SwingUtils {
         }
     }
 
-    public static Timer flashTime(JComponent component, int delay) {
+    /**
+     * @param component
+     * @param period In milliseconds.
+     * @return Timer to cancel blinking.
+     */
+    public static Timer blinkComponent(JComponent component, int period) {
         var bg = component.getBackground();
         var fg = component.getForeground();
         var t = new Timer();
@@ -98,8 +113,22 @@ public class SwingUtils {
                     component.setForeground(c);
                 });
             }
-        }, 0, delay);
+        }, 0, period);
 
         return t;
+    }
+
+    /** Calculate such a point for a window, that when positioned on that
+     * point, the window will be in the center of the screen.
+     * @param w
+     * @return Point for centering a window.
+     */
+    public static Point getScreenCenterForWindow(Window w) {
+        var height = w.getBounds().getHeight();
+        var width = w.getBounds().getWidth();
+        var center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+        center.setLocation(center.getX() - width / 2, center.getY() - height / 2);
+
+        return center;
     }
 }

@@ -1,68 +1,41 @@
 package fluks.timerng;
 
+import fluks.swing.utils.SwingUtils;
 import fluks.timerng.Global.Sound;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
-import java.awt.Point;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.prefs.Preferences;
-import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JLabel;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
-import javax.swing.LayoutStyle;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-public class GUI extends javax.swing.JFrame {
-    final private TimeUnits time = new TimeUnits();
-    final private TimeUnits targetTime = new TimeUnits();
-    private Timer timer;
-    private Timer timeLabelFlashTimer = null;
-    private final Color timeLabelFg;
-    private boolean timerIsRunning = false;
+public class GUI extends JFrame {
     private final Sound sound;
     private static final String ICON_FILE = "/resources/icon.png";
 
     public GUI() {
         initComponents();
-        var t = new TimerTab();
-        jTabbedPane1.addTab("Timer2", new TimerTab());
-        jTabbedPane1.addTab("Alarm", new AlarmTab());
-        jTabbedPane1.addTab("Stopwatch", new StopwatchTab());
-        jTabbedPane1.addTab("Timezones", new TimezonesTab());
+        tabbedPane.addTab("Timer", new TimerTab());
+        tabbedPane.addTab("Alarm", new AlarmTab());
+        tabbedPane.addTab("Stopwatch", new StopwatchTab());
+        tabbedPane.addTab("Timezones", new TimezonesTab());
         URL iconURL = getClass().getResource(ICON_FILE);
         this.setIconImage(new ImageIcon(iconURL).getImage());
         this.setTitle(Global.PROGRAM_NAME);
-        intervalCheckbox.setEnabled(false);
-        setLocation(getScreenCenterForWindow((Window) this));
-        getRootPane().setDefaultButton(startStopButton);
-        timeLabelFg = timeLabel.getForeground();
+        setLocation(SwingUtils.getScreenCenterForWindow((Window) this));
         sound = Global.getSoundInstance();
     }
 
@@ -75,26 +48,7 @@ public class GUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new JTabbedPane();
-        TimerPanel = new JPanel();
-        timeLabel = new JLabel();
-        intervalCheckbox = new JCheckBox();
-        TimePickerPanel = new JPanel();
-        millisecondSpinner = new JSpinner();
-        minuteSpinner = new JSpinner();
-        hourSpinner = new JSpinner();
-        secondSpinner = new JSpinner();
-        jLabel1 = new JLabel();
-        jLabel2 = new JLabel();
-        jLabel3 = new JLabel();
-        jLabel4 = new JLabel();
-        VolumePanel = new JPanel();
-        volumeLabel = new JLabel();
-        volumeSlider = new JSlider();
-        muteCheckbox = new JCheckBox();
-        ButtonPanel = new JPanel();
-        startStopButton = new JButton();
-        resetButton = new JButton();
+        tabbedPane = new JTabbedPane();
         jMenuBar1 = new JMenuBar();
         fileMenu = new JMenu();
         notificationMenuItem = new JCheckBoxMenuItem();
@@ -102,223 +56,13 @@ public class GUI extends javax.swing.JFrame {
         quitMenuItem = new JMenuItem();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
+        setMinimumSize(new Dimension(500, 400));
+        setSize(new Dimension(100, 100));
 
-        jTabbedPane1.setName(""); // NOI18N
-
-        timeLabel.setFont(new Font("Dialog", 1, 52)); // NOI18N
-        timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        timeLabel.setText("00:00:00:000");
-
-        intervalCheckbox.setMnemonic('i');
-        intervalCheckbox.setText("Interval");
-        intervalCheckbox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                intervalCheckboxActionPerformed(evt);
-            }
-        });
-
-        millisecondSpinner.setModel(new SpinnerNumberModel(0, 0, 999, 1));
-        millisecondSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent evt) {
-                millisecondSpinnerStateChanged(evt);
-            }
-        });
-
-        minuteSpinner.setModel(new SpinnerNumberModel(0, 0, 59, 1));
-        minuteSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent evt) {
-                minuteSpinnerStateChanged(evt);
-            }
-        });
-
-        hourSpinner.setModel(new SpinnerNumberModel(0, 0, null, 1));
-        hourSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent evt) {
-                hourSpinnerStateChanged(evt);
-            }
-        });
-
-        secondSpinner.setModel(new SpinnerNumberModel(0, 0, 59, 1));
-        secondSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent evt) {
-                secondSpinnerStateChanged(evt);
-            }
-        });
-
-        jLabel1.setDisplayedMnemonic('h');
-        jLabel1.setLabelFor(hourSpinner);
-        jLabel1.setText("hours");
-
-        jLabel2.setDisplayedMnemonic('n');
-        jLabel2.setLabelFor(minuteSpinner);
-        jLabel2.setText("minutes");
-
-        jLabel3.setDisplayedMnemonic('e');
-        jLabel3.setLabelFor(secondSpinner);
-        jLabel3.setText("seconds");
-
-        jLabel4.setDisplayedMnemonic('l');
-        jLabel4.setLabelFor(millisecondSpinner);
-        jLabel4.setText("milliseconds");
-
-        GroupLayout TimePickerPanelLayout = new GroupLayout(TimePickerPanel);
-        TimePickerPanel.setLayout(TimePickerPanelLayout);
-        TimePickerPanelLayout.setHorizontalGroup(TimePickerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(TimePickerPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(TimePickerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(hourSpinner, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(TimePickerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(minuteSpinner, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(TimePickerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(secondSpinner, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(TimePickerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(millisecondSpinner, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        TimePickerPanelLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {hourSpinner, millisecondSpinner, minuteSpinner, secondSpinner});
-
-        TimePickerPanelLayout.setVerticalGroup(TimePickerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(TimePickerPanelLayout.createSequentialGroup()
-                .addGroup(TimePickerPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(TimePickerPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                    .addComponent(hourSpinner, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(minuteSpinner, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(secondSpinner, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(millisecondSpinner, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)))
-        );
-
-        TimePickerPanelLayout.linkSize(SwingConstants.VERTICAL, new Component[] {hourSpinner, millisecondSpinner, minuteSpinner, secondSpinner});
-
-        volumeLabel.setFont(new Font("Noto Sans", 0, 18)); // NOI18N
-        volumeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        volumeLabel.setLabelFor(volumeSlider);
-        volumeLabel.setText("Volume");
-        volumeLabel.setToolTipText("");
-        volumeLabel.setAlignmentX(0.5F);
-
-        volumeSlider.setOrientation(JSlider.VERTICAL);
-        volumeSlider.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent evt) {
-                volumeSliderStateChanged(evt);
-            }
-        });
-
-        muteCheckbox.setMnemonic('m');
-        muteCheckbox.setText("Mute");
-        muteCheckbox.setHorizontalAlignment(SwingConstants.CENTER);
-        muteCheckbox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                muteCheckboxActionPerformed(evt);
-            }
-        });
-
-        GroupLayout VolumePanelLayout = new GroupLayout(VolumePanel);
-        VolumePanel.setLayout(VolumePanelLayout);
-        VolumePanelLayout.setHorizontalGroup(VolumePanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(VolumePanelLayout.createSequentialGroup()
-                .addGroup(VolumePanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(volumeLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(VolumePanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(VolumePanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                            .addComponent(volumeSlider, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(muteCheckbox, GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE))))
-                .addContainerGap())
-        );
-        VolumePanelLayout.setVerticalGroup(VolumePanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(VolumePanelLayout.createSequentialGroup()
-                .addComponent(volumeLabel, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(volumeSlider, GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(muteCheckbox, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE))
-        );
-
-        startStopButton.setFont(new Font("Noto Sans", 0, 14)); // NOI18N
-        startStopButton.setMnemonic('s');
-        startStopButton.setText("Start/Stop");
-        startStopButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                startStopButtonActionPerformed(evt);
-            }
-        });
-
-        resetButton.setFont(new Font("Noto Sans", 0, 14)); // NOI18N
-        resetButton.setMnemonic('r');
-        resetButton.setText("Reset");
-        resetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                resetButtonActionPerformed(evt);
-            }
-        });
-
-        GroupLayout ButtonPanelLayout = new GroupLayout(ButtonPanel);
-        ButtonPanel.setLayout(ButtonPanelLayout);
-        ButtonPanelLayout.setHorizontalGroup(ButtonPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(ButtonPanelLayout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(startStopButton, GroupLayout.PREFERRED_SIZE, 109, GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
-                .addComponent(resetButton, GroupLayout.PREFERRED_SIZE, 123, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(95, Short.MAX_VALUE))
-        );
-        ButtonPanelLayout.setVerticalGroup(ButtonPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(ButtonPanelLayout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addGroup(ButtonPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(startStopButton, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(resetButton, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        GroupLayout TimerPanelLayout = new GroupLayout(TimerPanel);
-        TimerPanel.setLayout(TimerPanelLayout);
-        TimerPanelLayout.setHorizontalGroup(TimerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(TimerPanelLayout.createSequentialGroup()
-                .addComponent(VolumePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(TimerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(TimePickerPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(TimerPanelLayout.createSequentialGroup()
-                        .addGroup(TimerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                            .addComponent(timeLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(ButtonPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(intervalCheckbox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap())))
-        );
-        TimerPanelLayout.setVerticalGroup(TimerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(TimerPanelLayout.createSequentialGroup()
-                .addGroup(TimerPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                    .addGroup(GroupLayout.Alignment.LEADING, TimerPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(VolumePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(GroupLayout.Alignment.LEADING, TimerPanelLayout.createSequentialGroup()
-                        .addComponent(timeLabel, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(intervalCheckbox, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(TimePickerPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ButtonPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-
-        jTabbedPane1.addTab("Timer", TimerPanel);
+        tabbedPane.setName(""); // NOI18N
+        getContentPane().add(tabbedPane, BorderLayout.CENTER);
+        tabbedPane.getAccessibleContext().setAccessibleName("");
+        tabbedPane.getAccessibleContext().setAccessibleDescription("");
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("File");
@@ -348,18 +92,6 @@ public class GUI extends javax.swing.JFrame {
 
         setJMenuBar(jMenuBar1);
 
-        GroupLayout layout = new GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
-        );
-        layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        );
-
-        jTabbedPane1.getAccessibleContext().setAccessibleName("");
-        jTabbedPane1.getAccessibleContext().setAccessibleDescription("");
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -372,230 +104,20 @@ public class GUI extends javax.swing.JFrame {
     private void notificationMenuItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_notificationMenuItemActionPerformed
     }//GEN-LAST:event_notificationMenuItemActionPerformed
 
-    private void resetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        if (timer != null)
-            timer.cancel();
-        if (timeLabelFlashTimer != null) {
-            timeLabelFlashTimer.cancel();
-            timeLabelFlashTimer = null;
-        }
-        timerIsRunning = false;
-        time.reset();
-        targetTime.reset();
-        timeLabel.setText(time.toString());
-        timeLabel.setForeground(timeLabelFg);
-        hourSpinner.setValue(0);
-        minuteSpinner.setValue(0);
-        secondSpinner.setValue(0);
-        millisecondSpinner.setValue(0);
-        setSpinnersEnabled(true);
-        //        alarm.stopAndRewind();
-        enableIntervalIfTargetTimeIsSet();
-    }//GEN-LAST:event_resetButtonActionPerformed
-
-    private void startStopButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
-        if (!timerIsRunning) {
-            timerIsRunning = true;
-            boolean isIntervalSelected = intervalCheckbox.isSelected();
-            boolean isTargetTimeSet = isTargetTimeSet();
-            intervalCheckbox.setEnabled(false);
-            setSpinnersEnabled(false);
-
-            timer = new Timer();
-            timer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    /* Everything using Swing components, must be done from
-                    * its event dispatching thread. */
-                    SwingUtilities.invokeLater(() -> {
-                        if (isTargetTimeSet &&
-                            !isIntervalSelected &&
-                            TimeUnits.timeUnitsAreEqual(time, targetTime)) {
-                            timer.cancel();
-                            //                            alarm.play();
-                            timeLabelFlashTimer = flashTime(timeLabelFlashTimer);
-
-                            intervalCheckbox.setEnabled(true);
-                            setSpinnersEnabled(true);
-                        }
-                        else if (timerIsRunning) {
-                            time.advance();
-                            timeLabel.setText(time.toString());
-                        }
-
-                        if (isIntervalSelected &&
-                            targetTime.timeInMilliseconds() != 0 &&
-                            time.mod(targetTime) == 0) {
-                            //                            beep.play();
-                        }
-                    });
-                }
-            }, 1, 1);
-        }
-        else {
-            timer.cancel();
-            if (timeLabelFlashTimer != null) {
-                timeLabelFlashTimer.cancel();
-                timeLabelFlashTimer = null;
-            }
-            timerIsRunning = false;
-            //            alarm.stopAndRewind();
-
-            setSpinnersEnabled(true);
-            enableIntervalIfTargetTimeIsSet();
-            timeLabel.setForeground(timeLabelFg);
-        }
-    }//GEN-LAST:event_startStopButtonActionPerformed
-
-    private void muteCheckboxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_muteCheckboxActionPerformed
-        if (muteCheckbox.isSelected()) {
-            //            alarm.mute(true);
-            //            beep.mute(true);
-        }
-        else {
-            //            alarm.mute(false);
-            //            beep.mute(false);
-        }
-    }//GEN-LAST:event_muteCheckboxActionPerformed
-
-    private void volumeSliderStateChanged(ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
-        int volume = volumeSlider.getValue();
-        //        beep.setVolume(volume, getSlideRange(volumeSlider));
-        //        alarm.setVolume(volume, getSlideRange(volumeSlider));
-
-        if (muteCheckbox.isSelected()) {
-            muteCheckbox.setSelected(false);
-            //            beep.mute(false);
-            //            alarm.mute(false);
-        }
-    }//GEN-LAST:event_volumeSliderStateChanged
-
-    private void secondSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_secondSpinnerStateChanged
-        targetTime.setSeconds((Integer) secondSpinner.getValue());
-        enableIntervalIfTargetTimeIsSet();
-    }//GEN-LAST:event_secondSpinnerStateChanged
-
-    private void hourSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_hourSpinnerStateChanged
-        targetTime.setHours((Integer) hourSpinner.getValue());
-        enableIntervalIfTargetTimeIsSet();
-    }//GEN-LAST:event_hourSpinnerStateChanged
-
-    private void minuteSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_minuteSpinnerStateChanged
-        targetTime.setMinutes((Integer) minuteSpinner.getValue());
-        enableIntervalIfTargetTimeIsSet();
-    }//GEN-LAST:event_minuteSpinnerStateChanged
-
-    private void millisecondSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_millisecondSpinnerStateChanged
-        targetTime.setMilliseconds((Integer) millisecondSpinner.getValue());
-        enableIntervalIfTargetTimeIsSet();
-    }//GEN-LAST:event_millisecondSpinnerStateChanged
-
-    private void intervalCheckboxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_intervalCheckboxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_intervalCheckboxActionPerformed
-
-    private Timer flashTime(Timer tOld) {
-        if (tOld != null)
-            tOld.cancel();
-
-        Color bg = timeLabel.getBackground();
-        Timer t = new Timer();
-        t.scheduleAtFixedRate(new TimerTask() {
-            private boolean b = true;
-            @Override
-            public void run() {
-                Color c = b ? bg : timeLabelFg;
-                b = !b;
-                SwingUtilities.invokeLater(() -> {
-                    timeLabel.setForeground(c);
-                });
-            }
-        }, 0, 500);
-
-        return t;
-    }
-
-    /** Check is target time set. It's set if at least some of the spinners
-     * is non-zero.
-     * @return False if all the spinners have zero value, true otherwise.
-     */
-    private boolean isTargetTimeSet() {
-        return ((Integer) hourSpinner.getValue()) != 0 ||
-               ((Integer) minuteSpinner.getValue()) != 0 ||
-               ((Integer) secondSpinner.getValue()) != 0 ||
-               ((Integer) millisecondSpinner.getValue()) != 0;
-    }
-
-    /** Enable or disable all the spinners.
-     * @param b Enable or disable spinners.
-     */
-    private void setSpinnersEnabled(boolean b) {
-        hourSpinner.setEnabled(b);
-        minuteSpinner.setEnabled(b);
-        secondSpinner.setEnabled(b);
-        millisecondSpinner.setEnabled(b);
-    }
-
-    /** Interval checkbox can be enabled only when target time is set.
-     * Enable interval checkbox when target time is set. Otherwise, disable
-     * checkbox and set it unselected.
-     */
-    private void enableIntervalIfTargetTimeIsSet() {
-        if (isTargetTimeSet())
-            intervalCheckbox.setEnabled(true);
-        else {
-            intervalCheckbox.setEnabled(false);
-            intervalCheckbox.setSelected(false);
-        }
-    }
-    
-    /** Calculate such a point for a window, that when positioned on that
-     * point, the window will be in the center of the screen.
-     * @return Point for centering a window.
-     */
-    private static Point getScreenCenterForWindow(Window c) {
-        double height = c.getBounds().getHeight();
-        double width  = c.getBounds().getWidth();
-        Point center  = GraphicsEnvironment.getLocalGraphicsEnvironment().
-            getCenterPoint();
-        center.setLocation(center.getX() - width / 2,
-                           center.getY() - height / 2);
-        
-        return center;
-    }
-
     public static void main(String args[]) {
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new GUI().setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            var gui = new GUI();
+            gui.setVisible(true);
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JPanel ButtonPanel;
-    private JPanel TimePickerPanel;
-    private JPanel TimerPanel;
-    private JPanel VolumePanel;
     private JMenu fileMenu;
-    private JSpinner hourSpinner;
-    private JCheckBox intervalCheckbox;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
-    private JLabel jLabel4;
     private JMenuBar jMenuBar1;
     private JPopupMenu.Separator jSeparator1;
-    private JTabbedPane jTabbedPane1;
-    private JSpinner millisecondSpinner;
-    private JSpinner minuteSpinner;
-    private JCheckBox muteCheckbox;
     private JCheckBoxMenuItem notificationMenuItem;
     private JMenuItem quitMenuItem;
-    private JButton resetButton;
-    private JSpinner secondSpinner;
-    private JButton startStopButton;
-    private JLabel timeLabel;
-    private JLabel volumeLabel;
-    private JSlider volumeSlider;
+    private JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
 }

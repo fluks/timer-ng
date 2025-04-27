@@ -345,33 +345,12 @@ public class TimerTab extends JPanel {
                         });
                         timer.cancel();
                         timerIsRunning = false;
-                        flashTimeLabelTimer = flashTime(flashTimeLabelTimer);
+                        flashTimeLabelTimer = SwingUtils.blinkComponent(timeLabel, 500);
                     }
                 }
             }, 1, 1);
         }
     }//GEN-LAST:event_startStopButtonActionPerformed
-
-    private Timer flashTime(Timer tOld) {
-        if (tOld != null)
-            tOld.cancel();
-
-        var bg = timeLabel.getBackground();
-        var t = new Timer();
-        t.scheduleAtFixedRate(new TimerTask() {
-            private boolean b = true;
-            @Override
-            public void run() {
-                var c = b ? bg : timeLabelFg;
-                b = !b;
-                SwingUtilities.invokeLater(() -> {
-                    timeLabel.setForeground(c);
-                });
-            }
-        }, 0, 500);
-
-        return t;
-    }
 
     private void volumeSliderStateChanged(ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
         var volume = volumeSlider.getValue();
