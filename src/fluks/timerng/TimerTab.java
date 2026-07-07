@@ -1,6 +1,7 @@
 package fluks.timerng;
 
 import fluks.swing.utils.SwingUtils;
+import fluks.timerng.Global.Settings;
 import fluks.timerng.sound.AbstractClipWrapper;
 import fluks.timerng.sound.NoSound;
 import java.awt.AWTException;
@@ -41,6 +42,7 @@ public class TimerTab extends JPanel {
     private final AbstractClipWrapper beep;
     private final AbstractClipWrapper alarm;
     private final int volumeRange;
+    private final Settings settings;
 
     public TimerTab() {
         initComponents();
@@ -58,6 +60,7 @@ public class TimerTab extends JPanel {
             alarm.setVolume(middle, volumeRange);
             beep.setVolume(middle, volumeRange);
         }
+        settings = Global.getSettingsInstance();
     }
 
     /**
@@ -332,7 +335,7 @@ public class TimerTab extends JPanel {
                     }
                     else if (TimeUnits.timeUnitsAreEqual(time, target)) {
                         alarm.play();
-                        SwingUtilities.invokeLater(() -> {
+                        if (settings.notify) {
                             try {
                                 SwingUtils.showDesktopNotification(
                                         "Timer finished",
@@ -340,9 +343,10 @@ public class TimerTab extends JPanel {
                                         Global.PROGRAM_NAME,
                                         null,
                                         5000);
-                            } catch (MalformedURLException | AWTException ex) {
                             }
-                        });
+                            catch (MalformedURLException | AWTException ex) {
+                            }
+                        }
                         timer.cancel();
                         timerIsRunning = false;
                         flashTimeLabelTimer = SwingUtils.blinkComponent(timeLabel, 500);

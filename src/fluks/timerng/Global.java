@@ -23,6 +23,7 @@ class Global {
     static class Settings {
         private static String nodeName = "/fluks/timerng";
         private Preferences prefs;
+        public static boolean notify;
         
         {
             prefs = Preferences.userRoot().node(nodeName);

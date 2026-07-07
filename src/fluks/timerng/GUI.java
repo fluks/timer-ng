@@ -1,6 +1,7 @@
 package fluks.timerng;
 
 import fluks.swing.utils.SwingUtils;
+import fluks.timerng.Global.Settings;
 import fluks.timerng.Global.Sound;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -24,6 +25,7 @@ import javax.swing.WindowConstants;
 
 public class GUI extends JFrame {
     private final Sound sound;
+    private final Settings settings;
     private static final String ICON_FILE = "/resources/icon.png";
 
     public GUI() {
@@ -37,6 +39,7 @@ public class GUI extends JFrame {
         this.setTitle(Global.PROGRAM_NAME);
         setLocation(SwingUtils.getScreenCenterForWindow((Window) this));
         sound = Global.getSoundInstance();
+        settings = Global.getSettingsInstance();
     }
 
     /**
@@ -102,6 +105,7 @@ public class GUI extends JFrame {
     }//GEN-LAST:event_quitMenuItemActionPerformed
 
     private void notificationMenuItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_notificationMenuItemActionPerformed
+        Settings.notify = notificationMenuItem.isSelected();
     }//GEN-LAST:event_notificationMenuItemActionPerformed
 
     public static void main(String args[]) {

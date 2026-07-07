@@ -1,14 +1,18 @@
 package fluks.timerng;
 
 import fluks.swing.utils.SwingUtils;
+import fluks.timerng.Global.Settings;
 import fluks.timerng.sound.AbstractClipWrapper;
+import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
@@ -28,6 +32,7 @@ public class AlarmTab extends JPanel {
     private LocalDateTime targetTime;
     private Timer timer;
     private AbstractClipWrapper alarm;
+    private final Settings settings;
 
     public AlarmTab() {
         initComponents();
@@ -35,6 +40,7 @@ public class AlarmTab extends JPanel {
 
         alarm = Global.getSoundInstance().getAlarm();
         targetTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
+        settings = Global.getSettingsInstance();
     }
 
     /**
@@ -234,6 +240,20 @@ public class AlarmTab extends JPanel {
                         alarm.play();
                         timer.cancel();
                         timer = null;
+                        if (settings.notify) {
+                            try {
+                                // Set nano to 0 to not show it.
+                                var time = targetTime.withNano(0).format(DateTimeFormatter.ISO_TIME);
+                                SwingUtils.showDesktopNotification(
+                                        "Alarm finished",
+                                        "Alarm you set to " + time + " is finished.",
+                                        Global.PROGRAM_NAME,
+                                        null,
+                                        5000);
+                            }
+                            catch (MalformedURLException | AWTException ex) {
+                            }
+                        }
                     }
                     else {
                         var remaining = String.format("%02d:%02d:%02d",
