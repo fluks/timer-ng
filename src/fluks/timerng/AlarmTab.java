@@ -1,7 +1,6 @@
 package fluks.timerng;
 
 import fluks.swing.utils.SwingUtils;
-import fluks.timerng.Global.Settings;
 import fluks.timerng.sound.AbstractClipWrapper;
 import java.awt.AWTException;
 import java.awt.Dimension;
@@ -9,6 +8,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ContainerAdapter;
+import java.awt.event.ContainerEvent;
 import java.net.MalformedURLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -32,7 +34,7 @@ public class AlarmTab extends JPanel {
     private LocalDateTime targetTime;
     private Timer timer;
     private AbstractClipWrapper alarm;
-    private final Settings settings;
+    private boolean muted;
 
     public AlarmTab() {
         initComponents();
@@ -40,7 +42,21 @@ public class AlarmTab extends JPanel {
 
         alarm = Global.getSoundInstance().getAlarm();
         targetTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
-        settings = Global.getSettingsInstance();
+
+        volumeSlider.addAncestorListener(new ComponentAddListener() {
+            @Override
+            public void ancestorAdded(AncestorEvent ae) {
+                volumeSlider.setValue(Settings.INSTANCE.getAlarmTabVolume());
+            }
+        });
+        muteCheckBox.addAncestorListener(new ComponentAddListener() {
+            @Override
+            public void ancestorAdded(AncestorEvent ae) {
+                muted = Settings.INSTANCE.getAlarmTabMute();
+                muteCheckBox.setSelected(muted);
+                alarm.mute(muted);
+            }
+        });
     }
 
     /**
@@ -86,6 +102,11 @@ public class AlarmTab extends JPanel {
 
         volumeSlider.setOrientation(JSlider.VERTICAL);
         volumeSlider.setMaximumSize(new Dimension(32767, 32767));
+        volumeSlider.addContainerListener(new ContainerAdapter() {
+            public void componentAdded(ContainerEvent evt) {
+                volumeSliderComponentAdded(evt);
+            }
+        });
         volumeSlider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent evt) {
                 volumeSliderStateChanged(evt);
@@ -95,6 +116,11 @@ public class AlarmTab extends JPanel {
 
         muteCheckBox.setMnemonic('u');
         muteCheckBox.setText("Mute");
+        muteCheckBox.addContainerListener(new ContainerAdapter() {
+            public void componentAdded(ContainerEvent evt) {
+                muteCheckBoxComponentAdded(evt);
+            }
+        });
         muteCheckBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 muteCheckBoxActionPerformed(evt);
@@ -212,11 +238,15 @@ public class AlarmTab extends JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void volumeSliderStateChanged(ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
-        alarm.setVolume(volumeSlider.getValue(), SwingUtils.getSliderRange(volumeSlider));
+        int volume = volumeSlider.getValue();
+        alarm.setVolume(volume, SwingUtils.getSliderRange(volumeSlider));
+        Settings.INSTANCE.setAlarmTabVolume(volume);
     }//GEN-LAST:event_volumeSliderStateChanged
 
     private void muteCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_muteCheckBoxActionPerformed
-        alarm.mute(muteCheckBox.isSelected());
+        muted = muteCheckBox.isSelected();
+        alarm.mute(muted);
+        Settings.INSTANCE.setAlarmTabMute(muted);
     }//GEN-LAST:event_muteCheckBoxActionPerformed
 
     private void startStopButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
@@ -240,7 +270,7 @@ public class AlarmTab extends JPanel {
                         alarm.play();
                         timer.cancel();
                         timer = null;
-                        if (settings.notify) {
+                        if (Settings.INSTANCE.getNotify()) {
                             try {
                                 // Set nano to 0 to not show it.
                                 var time = targetTime.withNano(0).format(DateTimeFormatter.ISO_TIME);
@@ -291,6 +321,18 @@ public class AlarmTab extends JPanel {
     private void secondsSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_secondsSpinnerStateChanged
         targetTime = targetTime.withSecond((int) secondsSpinner.getValue());
     }//GEN-LAST:event_secondsSpinnerStateChanged
+
+    private void volumeSliderComponentAdded(ContainerEvent evt) {//GEN-FIRST:event_volumeSliderComponentAdded
+        int volume = Settings.INSTANCE.getAlarmTabVolume();
+        volumeSlider.setValue(volume);
+        alarm.setVolume(volume, SwingUtils.getSliderRange(volumeSlider));
+    }//GEN-LAST:event_volumeSliderComponentAdded
+
+    private void muteCheckBoxComponentAdded(ContainerEvent evt) {//GEN-FIRST:event_muteCheckBoxComponentAdded
+        muted = Settings.INSTANCE.getAlarmTabMute();
+        alarm.mute(muted);
+        muteCheckBox.setSelected(muted);
+    }//GEN-LAST:event_muteCheckBoxComponentAdded
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

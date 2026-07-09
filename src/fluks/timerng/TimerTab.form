@@ -56,6 +56,7 @@
             </Property>
           </Properties>
           <Events>
+            <EventHandler event="componentAdded" listener="java.awt.event.ContainerListener" parameters="java.awt.event.ContainerEvent" handler="volumeSliderComponentAdded"/>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="volumeSliderStateChanged"/>
           </Events>
         </Component>
@@ -65,6 +66,7 @@
             <Property name="text" type="java.lang.String" value="Mute"/>
           </Properties>
           <Events>
+            <EventHandler event="componentAdded" listener="java.awt.event.ContainerListener" parameters="java.awt.event.ContainerEvent" handler="muteCheckBoxComponentAdded"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="muteCheckBoxActionPerformed"/>
           </Events>
         </Component>

@@ -1,7 +1,6 @@
 package fluks.timerng;
 
 import fluks.swing.utils.SwingUtils;
-import fluks.timerng.Global.Settings;
 import fluks.timerng.sound.AbstractClipWrapper;
 import fluks.timerng.sound.NoSound;
 import java.awt.AWTException;
@@ -12,6 +11,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ContainerAdapter;
+import java.awt.event.ContainerEvent;
 import java.net.MalformedURLException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,6 +27,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -42,7 +44,6 @@ public class TimerTab extends JPanel {
     private final AbstractClipWrapper beep;
     private final AbstractClipWrapper alarm;
     private final int volumeRange;
-    private final Settings settings;
 
     public TimerTab() {
         initComponents();
@@ -60,7 +61,22 @@ public class TimerTab extends JPanel {
             alarm.setVolume(middle, volumeRange);
             beep.setVolume(middle, volumeRange);
         }
-        settings = Global.getSettingsInstance();
+
+        volumeSlider.addAncestorListener(new ComponentAddListener() {
+            @Override
+            public void ancestorAdded(AncestorEvent ae) {
+                volumeSlider.setValue(Settings.INSTANCE.getTimerTabVolume());
+            }
+        });
+        muteCheckBox.addAncestorListener(new ComponentAddListener() {
+            @Override
+            public void ancestorAdded(AncestorEvent ae) {
+                muted = Settings.INSTANCE.getTimerTabMute();
+                muteCheckBox.setSelected(muted);
+                alarm.mute(muted);
+                beep.mute(muted);
+            }
+        });
     }
 
     /**
@@ -107,6 +123,11 @@ public class TimerTab extends JPanel {
 
         volumeSlider.setOrientation(JSlider.VERTICAL);
         volumeSlider.setMaximumSize(new Dimension(32767, 32767));
+        volumeSlider.addContainerListener(new ContainerAdapter() {
+            public void componentAdded(ContainerEvent evt) {
+                volumeSliderComponentAdded(evt);
+            }
+        });
         volumeSlider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent evt) {
                 volumeSliderStateChanged(evt);
@@ -116,6 +137,11 @@ public class TimerTab extends JPanel {
 
         muteCheckBox.setMnemonic('u');
         muteCheckBox.setText("Mute");
+        muteCheckBox.addContainerListener(new ContainerAdapter() {
+            public void componentAdded(ContainerEvent evt) {
+                muteCheckBoxComponentAdded(evt);
+            }
+        });
         muteCheckBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 muteCheckBoxActionPerformed(evt);
@@ -308,7 +334,7 @@ public class TimerTab extends JPanel {
         muted = muteCheckBox.isSelected();
         alarm.mute(muted);
         beep.mute(muted);
-
+        Settings.INSTANCE.setTimerTabMute(muted);
     }//GEN-LAST:event_muteCheckBoxActionPerformed
 
     private void startStopButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
@@ -335,7 +361,7 @@ public class TimerTab extends JPanel {
                     }
                     else if (TimeUnits.timeUnitsAreEqual(time, target)) {
                         alarm.play();
-                        if (settings.notify) {
+                        if (Settings.INSTANCE.getNotify()) {
                             try {
                                 SwingUtils.showDesktopNotification(
                                         "Timer finished",
@@ -360,6 +386,7 @@ public class TimerTab extends JPanel {
         var volume = volumeSlider.getValue();
         beep.setVolume(volume, volumeRange);
         alarm.setVolume(volume, volumeRange);
+        Settings.INSTANCE.setTimerTabVolume(volume);
     }//GEN-LAST:event_volumeSliderStateChanged
 
     private void hoursSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_hoursSpinnerStateChanged
@@ -381,6 +408,20 @@ public class TimerTab extends JPanel {
         target.setMilliseconds((int) millisecondsSpinner.getValue());
         intervalCheckBox.setEnabled(target.timeInMilliseconds() > 0);
     }//GEN-LAST:event_millisecondsSpinnerStateChanged
+
+        private void volumeSliderComponentAdded(ContainerEvent evt) {//GEN-FIRST:event_volumeSliderComponentAdded
+            int volume = Settings.INSTANCE.getTimerTabVolume();
+            volumeSlider.setValue(volume);
+            alarm.setVolume(volume, volumeRange);
+            beep.setVolume(volume, volumeRange);
+        }//GEN-LAST:event_volumeSliderComponentAdded
+
+    private void muteCheckBoxComponentAdded(ContainerEvent evt) {//GEN-FIRST:event_muteCheckBoxComponentAdded
+        muted = Settings.INSTANCE.getTimerTabMute();
+        alarm.mute(muted);
+        beep.mute(muted);
+        muteCheckBox.setSelected(muted);
+    }//GEN-LAST:event_muteCheckBoxComponentAdded
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JLabel hoursLabel;

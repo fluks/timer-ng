@@ -7,28 +7,18 @@ import fluks.timerng.sound.NoSound;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
-import javax.swing.JSlider;
 
 class Global {
-    private static Settings settings;
     private static Sound sound;
     public static final String PROGRAM_NAME = "Timer-ng";
+    public static final int RESOLUTION_NOT_SET = -1;
 
     public record AlarmTab(int volume, boolean muted, List<Map<TimeUnits, TimeUnits>> alarms) {}
     public record TimerTab(int volume, boolean muted, boolean interval, TimeUnits time, TimeUnits timer) {}
     public record StopwatchTab(List<TimeUnits> laps, TimeUnits time) {}
     public record TimezonesTab(List<ZoneId> zoneIds) {}
+    public record Resolution(int width, int height) {}
 
-    static class Settings {
-        private static String nodeName = "/fluks/timerng";
-        private Preferences prefs;
-        public static boolean notify;
-        
-        {
-            prefs = Preferences.userRoot().node(nodeName);
-        }
-    }
 
     static class Sound {
         private AbstractClipWrapper beep;
@@ -76,33 +66,10 @@ class Global {
         }
     }
 
-    public static Settings getSettingsInstance() {
-        if (settings == null) {
-            settings = new Settings();
-        }
-        return settings;
-    }
-
     public static Sound getSoundInstance() {
         if (sound == null) {
             sound = new Sound();
         }
         return sound;
-    }
-
-    /** Get range of the slider. |slider.max - slider.min|.
-     * @param slider
-     * @return The range of the slider.
-     */
-    public static int getSliderRange(JSlider slider) {
-        return Math.abs(slider.getMaximum() - slider.getMinimum());
-    }
-
-    /** Get middle value of a slider component.
-     * @param slider
-     * @return
-     */
-    public static int getSliderMiddle(JSlider slider) {
-        return (slider.getMaximum() - slider.getMinimum()) / 2;
     }
 }

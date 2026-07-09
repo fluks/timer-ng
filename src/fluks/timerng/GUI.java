@@ -1,7 +1,6 @@
 package fluks.timerng;
 
 import fluks.swing.utils.SwingUtils;
-import fluks.timerng.Global.Settings;
 import fluks.timerng.Global.Sound;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -22,10 +21,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.event.AncestorEvent;
 
 public class GUI extends JFrame {
     private final Sound sound;
-    private final Settings settings;
     private static final String ICON_FILE = "/resources/icon.png";
 
     public GUI() {
@@ -34,12 +33,24 @@ public class GUI extends JFrame {
         tabbedPane.addTab("Alarm", new AlarmTab());
         tabbedPane.addTab("Stopwatch", new StopwatchTab());
         tabbedPane.addTab("Timezones", new TimezonesTab());
+
         URL iconURL = getClass().getResource(ICON_FILE);
         this.setIconImage(new ImageIcon(iconURL).getImage());
         this.setTitle(Global.PROGRAM_NAME);
         setLocation(SwingUtils.getScreenCenterForWindow((Window) this));
         sound = Global.getSoundInstance();
-        settings = Global.getSettingsInstance();
+
+        Global.Resolution r = Settings.INSTANCE.getResolution();
+        if (r != null) {
+            setSize(r.width(), r.height());
+        }
+
+        notificationMenuItem.addAncestorListener(new ComponentAddListener() {
+            @Override
+            public void ancestorAdded(AncestorEvent ae) {
+                notificationMenuItem.setState(Settings.INSTANCE.getNotify());
+            }
+        });
     }
 
     /**
@@ -61,6 +72,7 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(500, 400));
         setSize(new Dimension(100, 100));
+        getContentPane().setLayout(new BorderLayout());
 
         tabbedPane.setName(""); // NOI18N
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -101,11 +113,14 @@ public class GUI extends JFrame {
     private void quitMenuItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_quitMenuItemActionPerformed
         sound.getAlarm().closeClip();
         sound.getBeep().closeClip();
+        Dimension d = getSize();
+        Settings.INSTANCE.setResolution(d.width, d.height);
+        Settings.INSTANCE.flush();
         System.exit(0);
     }//GEN-LAST:event_quitMenuItemActionPerformed
 
     private void notificationMenuItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_notificationMenuItemActionPerformed
-        Settings.notify = notificationMenuItem.isSelected();
+        Settings.INSTANCE.setNotify(notificationMenuItem.getState());
     }//GEN-LAST:event_notificationMenuItemActionPerformed
 
     public static void main(String args[]) {
