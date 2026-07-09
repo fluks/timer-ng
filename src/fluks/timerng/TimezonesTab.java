@@ -10,8 +10,10 @@ import java.util.TimerTask;
 import java.util.TreeSet;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox.KeySelectionManager;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -23,6 +25,7 @@ public class TimezonesTab extends javax.swing.JPanel {
         initComponents();
         addTimeZones();
         startClockTimer();
+        timezonesComboBox.setKeySelectionManager(new ZoneKeySelectionManager());
     }
 
     private void startClockTimer() {
@@ -203,6 +206,38 @@ public class TimezonesTab extends javax.swing.JPanel {
                 parent.revalidate();
                 parent.repaint();
             }
+        }
+    }
+
+    private static final class ZoneKeySelectionManager implements KeySelectionManager {
+        private String pattern = "";
+        private long lastKeyTime = 0;
+
+        @Override
+        public int selectionForKey(char keyChar, ComboBoxModel model) {
+            long now = System.currentTimeMillis();
+            // Reset if paused too long.
+            pattern = (now - lastKeyTime > 1000) ? "" : pattern;
+            pattern += Character.toLowerCase(keyChar);
+            lastKeyTime = now;
+
+            int match = findMatch(model, pattern);
+            if (match == -1 && pattern.length() > 1) {
+                // No match on the accumulated string, restart with just this key.
+                pattern = String.valueOf(Character.toLowerCase(keyChar));
+                match = findMatch(model, pattern);
+            }
+            return match;
+        }
+
+        private int findMatch(ComboBoxModel model, String prefix) {
+            for (int i = 0; i < model.getSize(); i++) {
+                var item = (TZObject) model.getElementAt(i);
+                if (item.getId().getId().toLowerCase().contains(prefix)) {
+                    return i;
+                }
+            }
+            return -1;
         }
     }
 
