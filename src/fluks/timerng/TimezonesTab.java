@@ -4,8 +4,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
@@ -18,12 +17,30 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 public class TimezonesTab extends javax.swing.JPanel {
-    private Map<String, Timer> timers;
+    private Timer timer;
 
     public TimezonesTab() {
         initComponents();
         addTimeZones();
-        timers = new HashMap<>();
+        startClockTimer();
+    }
+
+    private void startClockTimer() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                SwingUtilities.invokeLater(TimezonesTab.this::updateAllClocks);
+            }
+        }, 0, 1000);
+    }
+
+    private void updateAllClocks() {
+        for (var comp : timezonesPanel.getComponents()) {
+            if (comp instanceof TimeZonePanel tzPanel) {
+                tzPanel.updateTime();
+            }
+        }
     }
 
     private void addTimeZones() {
@@ -129,15 +146,14 @@ public class TimezonesTab extends javax.swing.JPanel {
     }//GEN-LAST:event_addActionPerformed
 
     private void resetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        timers.values().stream().forEach((t) -> {
-            t.cancel();
-        });
-        timers.clear();
         timezonesPanel.removeAll();
+        timezonesPanel.revalidate();
         timezonesPanel.repaint();
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private final class TimeZonePanel extends JPanel {
+        private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
+
         private final JLabel timeLabel;
         private final JLabel tzLabel;
         private final JButton removeButton;
@@ -172,35 +188,17 @@ public class TimezonesTab extends javax.swing.JPanel {
             removeButton.addActionListener(this::removeButtonActionPerformed);
             add(removeButton);
 
-            timers.put(tz.toString(), addTimer());
+            updateTime();
         }
 
-        private Timer addTimer() {
-            var timer = new Timer();
-            timer.scheduleAtFixedRate(new TimerTask() {
-                ZonedDateTime now = ZonedDateTime.now(tz.getId());
-                private TimeUnits time = new TimeUnits(now.getHour(), now.getMinute(), now.getSecond(), 0);
-                {
-                    time.setFormat("%02d%c%02d%c%02d");
-                }
-
-                @Override
-                public void run() {
-                    SwingUtilities.invokeLater(() -> {
-                        timeLabel.setText(time.toString());
-                    });
-                    time.advanceSecond();
-                }
-            }, 0, 1000);
-
-            return timer;
+        public void updateTime() {
+            var now = ZonedDateTime.now(tz.getId());
+            timeLabel.setText(TIME_FORMAT.format(now));
         }
 
         private void removeButtonActionPerformed(ActionEvent evt) {
             var parent = getParent();
             if (parent != null) {
-                timers.remove(tz.toString());
-                
                 parent.remove(this);
                 parent.revalidate();
                 parent.repaint();
