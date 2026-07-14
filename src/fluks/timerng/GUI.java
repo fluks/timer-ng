@@ -24,6 +24,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import javax.swing.event.AncestorEvent;
 
@@ -172,6 +174,11 @@ public class GUI extends JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     public static void main(String args[]) {
+        try {
+            UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
+        } catch (UnsupportedLookAndFeelException ex) {
+            System.err.println("Failed to initialize FlatLaf\n" + ex);
+        }
         /* Create and display the form */
         SwingUtilities.invokeLater(() -> {
             var gui = new GUI();
