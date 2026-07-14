@@ -127,6 +127,7 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
 
         jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.LINE_AXIS));
 
+        timezonesComboBox.setToolTipText("Type to search");
         jPanel5.add(timezonesComboBox);
 
         addButton.setMnemonic('a');
@@ -144,6 +145,8 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         jPanel3.setPreferredSize(new java.awt.Dimension(420, 44));
         jPanel3.setRequestFocusEnabled(false);
         jPanel3.setLayout(new java.awt.CardLayout());
+
+        timeZonesScrollPane.setToolTipText("Type to search");
 
         timezonesPanel.setLayout(new javax.swing.BoxLayout(timezonesPanel, javax.swing.BoxLayout.PAGE_AXIS));
         timeZonesScrollPane.setViewportView(timezonesPanel);
