@@ -165,7 +165,7 @@ public class StopwatchTab extends JPanel implements Tab {
         if (timer != null) {
             timer.cancel();
             timer = null;
-            time = null;
+            time = new TimeUnits();
             lastLapInMS = NOT_RUNNING;
         }
         timeLabel.setText("00:00:00:000");
