@@ -30,6 +30,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+/**
+ * 
+ */
 public class AlarmTab extends JPanel implements Tab {
     private LocalDateTime targetTime;
     private Timer timer;
@@ -37,6 +40,8 @@ public class AlarmTab extends JPanel implements Tab {
     private boolean muted;
     private final ActiveTab tab = Settings.ActiveTab.ALARM_TAB;
 
+    /**
+     */
     public AlarmTab() {
         initComponents();
         infoPanel.setVisible(false);
@@ -47,11 +52,16 @@ public class AlarmTab extends JPanel implements Tab {
         getState();
     }
 
+    /**
+     * @return 
+     */
     @Override
     public ActiveTab getTab() {
         return tab;
     }
 
+    /**
+     */
     public void saveState() {
         Settings.INSTANCE.setAlarmTabVolume(volumeSlider.getValue());
         Settings.INSTANCE.setAlarmTabMute(muted);
@@ -64,6 +74,8 @@ public class AlarmTab extends JPanel implements Tab {
         Settings.INSTANCE.setAlarmTabTimer(time);
     }
 
+    /**
+     */
     private void getState() {
         volumeSlider.setValue(Settings.INSTANCE.getAlarmTabVolume());
 
@@ -255,16 +267,25 @@ public class AlarmTab extends JPanel implements Tab {
         add(jPanel2);
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * @param evt 
+     */
     private void volumeSliderStateChanged(ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
         int volume = volumeSlider.getValue();
         alarm.setVolume(volume, SwingUtils.getSliderRange(volumeSlider));
     }//GEN-LAST:event_volumeSliderStateChanged
 
+    /**
+     * @param evt 
+     */
     private void muteCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_muteCheckBoxActionPerformed
         muted = muteCheckBox.isSelected();
         alarm.mute(muted);
     }//GEN-LAST:event_muteCheckBoxActionPerformed
 
+    /**
+     * @param evt 
+     */
     private void startStopButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
         if (timer == null) {
             alarm.stopAndRewind();
@@ -317,6 +338,9 @@ public class AlarmTab extends JPanel implements Tab {
         }
     }//GEN-LAST:event_startStopButtonActionPerformed
 
+    /**
+     * @param evt 
+     */
     private void resetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         hoursSpinner.setValue(0);
         minutesSpinner.setValue(0);
@@ -326,24 +350,39 @@ public class AlarmTab extends JPanel implements Tab {
         alarm.stopAndRewind();
     }//GEN-LAST:event_resetButtonActionPerformed
 
+    /**
+     * @param evt 
+     */
     private void hoursSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_hoursSpinnerStateChanged
         targetTime = targetTime.withHour((int) hoursSpinner.getValue());
     }//GEN-LAST:event_hoursSpinnerStateChanged
 
+    /**
+     * @param evt 
+     */
     private void minutesSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_minutesSpinnerStateChanged
         targetTime = targetTime.withMinute((int) minutesSpinner.getValue());
     }//GEN-LAST:event_minutesSpinnerStateChanged
 
+    /**
+     * @param evt 
+     */
     private void secondsSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_secondsSpinnerStateChanged
         targetTime = targetTime.withSecond((int) secondsSpinner.getValue());
     }//GEN-LAST:event_secondsSpinnerStateChanged
 
+    /**
+     * @param evt 
+     */
     private void volumeSliderComponentAdded(ContainerEvent evt) {//GEN-FIRST:event_volumeSliderComponentAdded
         int volume = Settings.INSTANCE.getAlarmTabVolume();
         volumeSlider.setValue(volume);
         alarm.setVolume(volume, SwingUtils.getSliderRange(volumeSlider));
     }//GEN-LAST:event_volumeSliderComponentAdded
 
+    /**
+     * @param evt 
+     */
     private void muteCheckBoxComponentAdded(ContainerEvent evt) {//GEN-FIRST:event_muteCheckBoxComponentAdded
         muted = Settings.INSTANCE.getAlarmTabMute();
         alarm.mute(muted);

@@ -35,11 +35,16 @@ public class StopwatchTab extends JPanel implements Tab {
         loadLaps();
     }
 
+    /**
+     * @return 
+     */
     @Override
     public ActiveTab getTab() {
         return tab;
     }
 
+    /**
+     */
     private void loadLaps() {
         for(var l : Settings.INSTANCE.getLaps()) {
             lapsPanel.add(new JLabel(l));
@@ -51,6 +56,8 @@ public class StopwatchTab extends JPanel implements Tab {
         });
     }
 
+    /**
+     */
     public void saveState() {
         List<String> laps = List.of(lapsPanel.getComponents()).stream()
             .map(l -> {
@@ -137,6 +144,9 @@ public class StopwatchTab extends JPanel implements Tab {
         add(jPanel2);
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * @param evt 
+     */
     private void lapButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_lapButtonActionPerformed
         if (timer != null) {
             var now = time.timeInMilliseconds();
@@ -161,6 +171,9 @@ public class StopwatchTab extends JPanel implements Tab {
         }
     }//GEN-LAST:event_lapButtonActionPerformed
 
+    /**
+     * @param evt 
+     */
     private void resetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         if (timer != null) {
             timer.cancel();
@@ -174,6 +187,9 @@ public class StopwatchTab extends JPanel implements Tab {
         lapsPanel.repaint();
     }//GEN-LAST:event_resetButtonActionPerformed
 
+    /**
+     * @param evt 
+     */
     private void startStopButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
         if (timer == null) {
             timer = new Timer();

@@ -54,6 +54,10 @@ public class TimeUnits implements Serializable {
         this.milliseconds = milliseconds;
     }
 
+    /**
+     * @param ms
+     * @throws IllegalArgumentException 
+     */
     public TimeUnits(long ms) throws IllegalArgumentException {
         if (ms < 0) {
             throw new IllegalArgumentException("ms can't be negative");
@@ -76,6 +80,9 @@ public class TimeUnits implements Serializable {
         this.milliseconds = _ms;
     }
 
+    /**
+     * @return 
+     */
     public TimeUnits copy() {
         return new TimeUnits(hours, minutes, seconds, milliseconds).
             setFormat(format).setDelimiter(delimiter);
@@ -200,6 +207,9 @@ public class TimeUnits implements Serializable {
         return this;
     }
 
+    /**
+     * @return 
+     */
     public TimeUnits advanceMinute() {
         stepOneMinute();
         return this;

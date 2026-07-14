@@ -28,6 +28,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
+/**
+ */
 public class GUI extends JFrame {
     private final Sound sound;
     private final TimerTab timerTab;
@@ -36,6 +38,8 @@ public class GUI extends JFrame {
     private final TimezonesTab timezonesTab;
     private static final String ICON_FILE = "/resources/icon.png";
 
+    /**
+     */
     public GUI() {
         initComponents();
 
@@ -63,6 +67,9 @@ public class GUI extends JFrame {
         notificationMenuItem.setState(Settings.INSTANCE.getNotify());
     }
 
+    /**
+     * 
+     */
     private void activateTab() {
         var tab = Settings.INSTANCE.getActiveTab();
         for (Component c : tabbedPane.getComponents()) {
@@ -74,6 +81,9 @@ public class GUI extends JFrame {
         }
     }
 
+    /**
+     * @return 
+     */
     private ActiveTab getActiveTab() {
         var c = tabbedPane.getSelectedComponent();
         var t =  ((Tab) c).getTab();
@@ -141,6 +151,9 @@ public class GUI extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * @param evt 
+     */
     private void quitMenuItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_quitMenuItemActionPerformed
         sound.getAlarm().closeClip();
         sound.getBeep().closeClip();
@@ -158,14 +171,23 @@ public class GUI extends JFrame {
         System.exit(0);
     }//GEN-LAST:event_quitMenuItemActionPerformed
 
+    /**
+     * @param evt 
+     */
     private void notificationMenuItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_notificationMenuItemActionPerformed
         Settings.INSTANCE.setNotify(notificationMenuItem.getState());
     }//GEN-LAST:event_notificationMenuItemActionPerformed
 
+    /**
+     * @param evt 
+     */
     private void formWindowClosing(WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         quitMenuItemActionPerformed(null);
     }//GEN-LAST:event_formWindowClosing
 
+    /**
+     * @param args 
+     */
     public static void main(String args[]) {
         try {
             UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());

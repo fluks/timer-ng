@@ -20,6 +20,9 @@ import javax.swing.JComponent;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 
+/**
+ * @author jukka
+ */
 public class SwingUtils {
     /** Get range of the slider. |slider.max - slider.min|.
      * @param slider

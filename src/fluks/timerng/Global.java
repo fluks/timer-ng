@@ -8,6 +8,8 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
+/**
+ */
 class Global {
     private static Sound sound;
     public static final String PROGRAM_NAME = "Timer-ng";
@@ -20,6 +22,8 @@ class Global {
     public record Resolution(int width, int height) {}
 
 
+    /**
+     */
     static class Sound {
         private AbstractClipWrapper beep;
         private AbstractClipWrapper alarm;
@@ -33,10 +37,16 @@ class Global {
             alarm = loadSound(alarm, ALARM_FILE);
         }
 
+        /**
+         * @return 
+         */
         public AbstractClipWrapper getAlarm() {
             return alarm;
         }
 
+        /**
+         * @return 
+         */
         public AbstractClipWrapper getBeep() {
             return beep;
         }
@@ -66,6 +76,9 @@ class Global {
         }
     }
 
+    /**
+     * @return 
+     */
     public static Sound getSoundInstance() {
         if (sound == null) {
             sound = new Sound();

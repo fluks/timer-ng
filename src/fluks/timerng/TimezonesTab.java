@@ -20,10 +20,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+/**
+ * @author jukka
+ */
 public class TimezonesTab extends javax.swing.JPanel implements Tab {
     private Timer timer;
     private final ActiveTab tab = Settings.ActiveTab.TIMEZONES_TAB;
 
+    /**
+     */
     public TimezonesTab() {
         initComponents();
         addTimeZones();
@@ -32,11 +37,16 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         getState();
     }
 
+    /**
+     * @return 
+     */
     @Override
     public ActiveTab getTab() {
         return tab;
     }
 
+    /**
+     */
     private void startClockTimer() {
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -47,6 +57,8 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         }, 0, 1000);
     }
 
+    /**
+     */
     private void updateAllClocks() {
         for (var comp : timezonesPanel.getComponents()) {
             if (comp instanceof TimeZonePanel tzPanel) {
@@ -55,6 +67,8 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         }
     }
 
+    /**
+     */
     private void addTimeZones() {
         var ids = new TreeSet<String>(ZoneId.getAvailableZoneIds());
         for (var id : ids) {
@@ -63,6 +77,8 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         } 
     }
 
+    /**
+     */
     public void saveState() {
         var zones= new ArrayList<ZoneId>();
         for (var comp : timezonesPanel.getComponents()) {
@@ -74,6 +90,8 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         Settings.INSTANCE.setTimezones(zones);
     }
 
+    /**
+     */
     private void getState() {
         Settings.INSTANCE.getTimezones().stream().
             forEachOrdered((id) -> {
@@ -83,17 +101,28 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         timezonesPanel.revalidate();
     }
 
+    /**
+     */
     private final class TZObject {
         private ZoneId id;
 
+        /**
+         * @param id 
+         */
         public TZObject(ZoneId id) {
             this.id = id;
         }
 
+        /**
+         * @return 
+         */
         public ZoneId getId() {
             return id;
         }
 
+        /**
+         * @return 
+         */
         @Override
         public String toString() {
             var now = ZonedDateTime.now(id);
@@ -169,6 +198,9 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         add(jPanel2);
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * @param evt 
+     */
     private void addActionPerformed(ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
         var tz = (TZObject) timezonesComboBox.getSelectedItem();
         timezonesPanel.add(new TimeZonePanel(tz));
@@ -180,12 +212,17 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         });
     }//GEN-LAST:event_addActionPerformed
 
+    /**
+     * @param evt 
+     */
     private void resetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         timezonesPanel.removeAll();
         timezonesPanel.revalidate();
         timezonesPanel.repaint();
     }//GEN-LAST:event_resetButtonActionPerformed
 
+    /**
+     */
     private final class TimeZonePanel extends JPanel {
         private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
 
@@ -194,6 +231,9 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         private final JButton removeButton;
         private final TZObject tz;
 
+        /**
+         * @param tz 
+         */
         public TimeZonePanel(TZObject tz) {
             this.tz = tz;
 
@@ -226,11 +266,16 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
             updateTime();
         }
 
+        /**
+         */
         public void updateTime() {
             var now = ZonedDateTime.now(tz.getId());
             timeLabel.setText(TIME_FORMAT.format(now));
         }
 
+        /**
+         * @param evt 
+         */
         private void removeButtonActionPerformed(ActionEvent evt) {
             var parent = getParent();
             if (parent != null) {
@@ -241,10 +286,17 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         }
     }
 
+    /**
+     */
     private static final class ZoneKeySelectionManager implements KeySelectionManager {
         private String pattern = "";
         private long lastKeyTime = 0;
 
+        /**
+         * @param keyChar
+         * @param model
+         * @return 
+         */
         @Override
         public int selectionForKey(char keyChar, ComboBoxModel model) {
             long now = System.currentTimeMillis();
@@ -262,6 +314,11 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
             return match;
         }
 
+        /**
+         * @param model
+         * @param prefix
+         * @return 
+         */
         private int findMatch(ComboBoxModel model, String prefix) {
             for (int i = 0; i < model.getSize(); i++) {
                 var item = (TZObject) model.getElementAt(i);

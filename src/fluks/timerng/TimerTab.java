@@ -29,6 +29,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+/**
+ */
 public class TimerTab extends JPanel implements Tab {
     private boolean interval = false;
     private boolean muted = false;
@@ -44,6 +46,8 @@ public class TimerTab extends JPanel implements Tab {
     private final int volumeRange;
     private final ActiveTab tab = Settings.ActiveTab.TIMER_TAB;
 
+    /**
+     */
     public TimerTab() {
         initComponents();
         timeLabelFg = timeLabel.getForeground();
@@ -64,11 +68,16 @@ public class TimerTab extends JPanel implements Tab {
         getState();
     }
 
+    /**
+     * @return 
+     */
     @Override
     public ActiveTab getTab() {
         return tab;
     }
 
+    /**
+     */
     public void saveState() {
         Settings.INSTANCE.setTimerTabMute(muted);
         Settings.INSTANCE.setTimerTabVolume(volumeSlider.getValue());
@@ -76,6 +85,8 @@ public class TimerTab extends JPanel implements Tab {
         Settings.INSTANCE.setTimerTabInterval(intervalCheckBox.isEnabled());
     }
 
+    /**
+     */
     private void getState() {
         volumeSlider.setValue(Settings.INSTANCE.getTimerTabVolume());
 
@@ -301,10 +312,16 @@ public class TimerTab extends JPanel implements Tab {
         add(jPanel2);
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * @param evt 
+     */
     private void intervalCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_intervalCheckBoxActionPerformed
         interval = intervalCheckBox.isSelected();
     }//GEN-LAST:event_intervalCheckBoxActionPerformed
 
+    /**
+     * @param evt 
+     */
     private void resetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         muteCheckBox.setSelected(false);
         muted = false;
@@ -333,12 +350,18 @@ public class TimerTab extends JPanel implements Tab {
         beep.mute(false);
     }//GEN-LAST:event_resetButtonActionPerformed
 
+    /**
+     * @param evt 
+     */
     private void muteCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_muteCheckBoxActionPerformed
         muted = muteCheckBox.isSelected();
         alarm.mute(muted);
         beep.mute(muted);
     }//GEN-LAST:event_muteCheckBoxActionPerformed
 
+    /**
+     * @param evt 
+     */
     private void startStopButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
         if (target.timeInMilliseconds() == 0) {
             return;
@@ -384,27 +407,42 @@ public class TimerTab extends JPanel implements Tab {
         }
     }//GEN-LAST:event_startStopButtonActionPerformed
 
+    /**
+     * @param evt 
+     */
     private void volumeSliderStateChanged(ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
         var volume = volumeSlider.getValue();
         beep.setVolume(volume, volumeRange);
         alarm.setVolume(volume, volumeRange);
     }//GEN-LAST:event_volumeSliderStateChanged
 
+    /**
+     * @param evt 
+     */
     private void hoursSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_hoursSpinnerStateChanged
         target.setHours((int) hoursSpinner.getValue());
         intervalCheckBox.setEnabled(target.timeInMilliseconds() > 0);
     }//GEN-LAST:event_hoursSpinnerStateChanged
 
+    /**
+     * @param evt 
+     */
     private void minutesSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_minutesSpinnerStateChanged
         target.setMinutes((int) minutesSpinner.getValue());
         intervalCheckBox.setEnabled(target.timeInMilliseconds() > 0);
     }//GEN-LAST:event_minutesSpinnerStateChanged
 
+    /**
+     * @param evt 
+     */
     private void secondsSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_secondsSpinnerStateChanged
         target.setSeconds((int) secondsSpinner.getValue());
         intervalCheckBox.setEnabled(target.timeInMilliseconds() > 0);
     }//GEN-LAST:event_secondsSpinnerStateChanged
 
+    /**
+     * @param evt 
+     */
     private void millisecondsSpinnerStateChanged(ChangeEvent evt) {//GEN-FIRST:event_millisecondsSpinnerStateChanged
         target.setMilliseconds((int) millisecondsSpinner.getValue());
         intervalCheckBox.setEnabled(target.timeInMilliseconds() > 0);
