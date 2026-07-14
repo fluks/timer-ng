@@ -1,6 +1,7 @@
 package fluks.timerng;
 
 import fluks.swing.utils.SwingUtils;
+import fluks.timerng.Settings.ActiveTab;
 import fluks.timerng.sound.AbstractClipWrapper;
 import java.awt.AWTException;
 import java.awt.Dimension;
@@ -26,15 +27,15 @@ import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.AncestorEvent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class AlarmTab extends JPanel {
+public class AlarmTab extends JPanel implements Tab {
     private LocalDateTime targetTime;
     private Timer timer;
     private AbstractClipWrapper alarm;
     private boolean muted;
+    private final ActiveTab tab = Settings.ActiveTab.ALARM_TAB;
 
     public AlarmTab() {
         initComponents();
@@ -43,20 +44,37 @@ public class AlarmTab extends JPanel {
         alarm = Global.getSoundInstance().getAlarm();
         targetTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
 
-        volumeSlider.addAncestorListener(new ComponentAddListener() {
-            @Override
-            public void ancestorAdded(AncestorEvent ae) {
-                volumeSlider.setValue(Settings.INSTANCE.getAlarmTabVolume());
-            }
-        });
-        muteCheckBox.addAncestorListener(new ComponentAddListener() {
-            @Override
-            public void ancestorAdded(AncestorEvent ae) {
-                muted = Settings.INSTANCE.getAlarmTabMute();
-                muteCheckBox.setSelected(muted);
-                alarm.mute(muted);
-            }
-        });
+        getState();
+    }
+
+    @Override
+    public ActiveTab getTab() {
+        return tab;
+    }
+
+    public void saveState() {
+        Settings.INSTANCE.setAlarmTabVolume(volumeSlider.getValue());
+        Settings.INSTANCE.setAlarmTabMute(muted);
+        var time = new TimeUnits(
+            (int) hoursSpinner.getValue(),
+            (int) minutesSpinner.getValue(),
+            (int) secondsSpinner.getValue(),
+            0
+        );
+        Settings.INSTANCE.setAlarmTabTimer(time);
+    }
+
+    private void getState() {
+        volumeSlider.setValue(Settings.INSTANCE.getAlarmTabVolume());
+
+        muted = Settings.INSTANCE.getAlarmTabMute();
+        muteCheckBox.setSelected(muted);
+        alarm.mute(muted);
+
+        var time = Settings.INSTANCE.getAlarmTabTimer();
+        hoursSpinner.setValue(time.getHours());
+        minutesSpinner.setValue(time.getMinutes());
+        secondsSpinner.setValue(time.getSeconds());
     }
 
     /**
@@ -240,13 +258,11 @@ public class AlarmTab extends JPanel {
     private void volumeSliderStateChanged(ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
         int volume = volumeSlider.getValue();
         alarm.setVolume(volume, SwingUtils.getSliderRange(volumeSlider));
-        Settings.INSTANCE.setAlarmTabVolume(volume);
     }//GEN-LAST:event_volumeSliderStateChanged
 
     private void muteCheckBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_muteCheckBoxActionPerformed
         muted = muteCheckBox.isSelected();
         alarm.mute(muted);
-        Settings.INSTANCE.setAlarmTabMute(muted);
     }//GEN-LAST:event_muteCheckBoxActionPerformed
 
     private void startStopButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed

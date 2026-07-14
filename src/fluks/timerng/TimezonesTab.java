@@ -1,10 +1,12 @@
 package fluks.timerng;
 
+import fluks.timerng.Settings.ActiveTab;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
@@ -18,14 +20,21 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-public class TimezonesTab extends javax.swing.JPanel {
+public class TimezonesTab extends javax.swing.JPanel implements Tab {
     private Timer timer;
+    private final ActiveTab tab = Settings.ActiveTab.TIMEZONES_TAB;
 
     public TimezonesTab() {
         initComponents();
         addTimeZones();
         startClockTimer();
         timezonesComboBox.setKeySelectionManager(new ZoneKeySelectionManager());
+        getState();
+    }
+
+    @Override
+    public ActiveTab getTab() {
+        return tab;
     }
 
     private void startClockTimer() {
@@ -52,6 +61,26 @@ public class TimezonesTab extends javax.swing.JPanel {
             var tz = ZoneId.of(id);
             timezonesComboBox.addItem(new TZObject(tz));
         } 
+    }
+
+    public void saveState() {
+        var zones= new ArrayList<ZoneId>();
+        for (var comp : timezonesPanel.getComponents()) {
+            if (comp instanceof TimeZonePanel tzPanel) {
+                zones.add(tzPanel.tz.id);
+            }
+        }
+
+        Settings.INSTANCE.setTimezones(zones);
+    }
+
+    private void getState() {
+        Settings.INSTANCE.getTimezones().stream().
+            forEachOrdered((id) -> {
+                 var tz = new TZObject(id);
+                 timezonesPanel.add(new TimeZonePanel(tz));
+            });
+        timezonesPanel.revalidate();
     }
 
     private final class TZObject {

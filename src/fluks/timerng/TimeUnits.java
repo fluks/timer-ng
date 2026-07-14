@@ -1,11 +1,12 @@
 package fluks.timerng;
 
+import java.io.Serializable;
 import java.util.IllegalFormatException;
 
 /** A class for time unit handling for a timer for example. Time units are;
  * hours, minutes, seconds and milliseconds.
  */
-public class TimeUnits {
+public class TimeUnits implements Serializable {
     public static final int HOURS_MIN        = 0;
     public static final int MINUTES_MAX      = 60;
     public static final int MINUTES_MIN      = 0;

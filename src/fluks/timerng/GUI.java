@@ -2,13 +2,17 @@ package fluks.timerng;
 
 import fluks.swing.utils.SwingUtils;
 import fluks.timerng.Global.Sound;
+import fluks.timerng.Settings.ActiveTab;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -25,14 +29,23 @@ import javax.swing.event.AncestorEvent;
 
 public class GUI extends JFrame {
     private final Sound sound;
+    private final TimerTab timerTab;
+    private final AlarmTab alarmTab;
+    private final StopwatchTab stopwatchTab;
+    private final TimezonesTab timezonesTab;
     private static final String ICON_FILE = "/resources/icon.png";
 
     public GUI() {
         initComponents();
-        tabbedPane.addTab("Timer", new TimerTab());
-        tabbedPane.addTab("Alarm", new AlarmTab());
-        tabbedPane.addTab("Stopwatch", new StopwatchTab());
-        tabbedPane.addTab("Timezones", new TimezonesTab());
+
+        timerTab = new TimerTab();
+        alarmTab = new AlarmTab();
+        stopwatchTab = new StopwatchTab();
+        timezonesTab = new TimezonesTab();
+        tabbedPane.addTab("Timer", timerTab);
+        tabbedPane.addTab("Alarm", alarmTab);
+        tabbedPane.addTab("Stopwatch", stopwatchTab);
+        tabbedPane.addTab("Timezones", timezonesTab);
 
         URL iconURL = getClass().getResource(ICON_FILE);
         this.setIconImage(new ImageIcon(iconURL).getImage());
@@ -45,12 +58,31 @@ public class GUI extends JFrame {
             setSize(r.width(), r.height());
         }
 
+        activateTab();
+
         notificationMenuItem.addAncestorListener(new ComponentAddListener() {
             @Override
             public void ancestorAdded(AncestorEvent ae) {
                 notificationMenuItem.setState(Settings.INSTANCE.getNotify());
             }
         });
+    }
+
+    private void activateTab() {
+        var tab = Settings.INSTANCE.getActiveTab();
+        for (Component c : tabbedPane.getComponents()) {
+            var t = (Tab) c;
+            if (t.getTab().equals(tab)) {
+                tabbedPane.setSelectedComponent(c);
+                return;
+            }
+        }
+    }
+
+    private ActiveTab getActiveTab() {
+        var c = tabbedPane.getSelectedComponent();
+        var t =  ((Tab) c).getTab();
+        return t;
     }
 
     /**
@@ -72,7 +104,11 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(500, 400));
         setSize(new Dimension(100, 100));
-        getContentPane().setLayout(new BorderLayout());
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         tabbedPane.setName(""); // NOI18N
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -113,15 +149,27 @@ public class GUI extends JFrame {
     private void quitMenuItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_quitMenuItemActionPerformed
         sound.getAlarm().closeClip();
         sound.getBeep().closeClip();
+
         Dimension d = getSize();
         Settings.INSTANCE.setResolution(d.width, d.height);
+        timerTab.saveState();
+        alarmTab.saveState();
+        stopwatchTab.saveState();
+        timezonesTab.saveState();
+        Settings.INSTANCE.setActiveTab(getActiveTab());
+
         Settings.INSTANCE.flush();
+
         System.exit(0);
     }//GEN-LAST:event_quitMenuItemActionPerformed
 
     private void notificationMenuItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_notificationMenuItemActionPerformed
         Settings.INSTANCE.setNotify(notificationMenuItem.getState());
     }//GEN-LAST:event_notificationMenuItemActionPerformed
+
+    private void formWindowClosing(WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        quitMenuItemActionPerformed(null);
+    }//GEN-LAST:event_formWindowClosing
 
     public static void main(String args[]) {
         /* Create and display the form */

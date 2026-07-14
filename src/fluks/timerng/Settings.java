@@ -2,6 +2,10 @@ package fluks.timerng;
 
 import static fluks.timerng.Global.RESOLUTION_NOT_SET;
 import fluks.timerng.Global.Resolution;
+import java.io.Serializable;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -9,6 +13,13 @@ import java.util.prefs.Preferences;
  */
 public enum Settings {
     INSTANCE;
+
+    public enum ActiveTab {
+        TIMER_TAB,
+        ALARM_TAB,
+        STOPWATCH_TAB,
+        TIMEZONES_TAB;
+    }
 
     private static final String NODE_NAME = "/fluks/timerng";
     private final Preferences prefs = Preferences.userRoot().node(NODE_NAME);
@@ -59,8 +70,42 @@ public enum Settings {
         return prefs.getBoolean("timertabmute", false);
     }
 
+    public void setTimerTabInterval(boolean interval) {
+        prefs.putBoolean("timertabinterval", interval);
+    }
+
+    public boolean getTimerTabInterval() {
+        return prefs.getBoolean("timertabinterval", false);
+    }
+
     public void setAlarmTabMute(boolean mute) {
         prefs.putBoolean("alarmtabmute", mute);
+    }
+
+    public void setTimerTabTimer(TimeUnits time) {
+        var timeString = Utils.writeObjectToString(time);
+        prefs.put("timertabtimer", timeString);
+    }
+
+    public TimeUnits getTimerTabTimer() {
+        var time= prefs.get("timertabtimer", "");
+        if (time.isEmpty()) {
+            return new TimeUnits();
+        }
+        return (TimeUnits) Utils.readObjectFromString(time);
+    }
+
+    public void setAlarmTabTimer(TimeUnits time) {
+        var timeString = Utils.writeObjectToString(time);
+        prefs.put("alarmtabtimer", timeString);
+    }
+
+    public TimeUnits getAlarmTabTimer() {
+        var time= prefs.get("alarmtabtimer", "");
+        if (time.isEmpty()) {
+            return new TimeUnits();
+        }
+        return (TimeUnits) Utils.readObjectFromString(time);
     }
 
     public boolean getAlarmTabMute() {
@@ -73,5 +118,44 @@ public enum Settings {
 
     public int getAlarmTabVolume() {
         return prefs.getInt("alarmtabvolume", 50);
+    }
+
+    public void setTimezones(List<ZoneId> zones) {
+        var encoded = Utils.writeObjectToString((Serializable) zones);
+        prefs.put("timezonestabzones", encoded);
+    }
+
+    public List<ZoneId> getTimezones() {
+        var encoded = prefs.get("timezonestabzones", "");
+        if (encoded.isEmpty()) {
+            return new ArrayList<>();
+        }
+        var decoded = Utils.readObjectFromString(encoded);
+        if (decoded == null) {
+            return new ArrayList<>();
+        }
+
+        return (List<ZoneId>) decoded;
+    }
+
+    public void setActiveTab(ActiveTab tab) {
+        prefs.putInt("activetab", tab.ordinal());
+    }
+
+    public ActiveTab getActiveTab() {
+        var i = prefs.getInt("activetab", ActiveTab.TIMER_TAB.ordinal());
+        var tabs = ActiveTab.values();
+
+        return (i >= 0 && i < tabs.length ? tabs[i] : ActiveTab.TIMER_TAB);
+    }
+
+    public void setLaps(List<String> laps) {
+        var s = Utils.writeObjectToString((Serializable) laps);
+        prefs.put("laps", s);
+    }
+
+    public List<String> getLaps() {
+        var s = prefs.get("laps", "[]");
+        return (List<String>) Utils.readObjectFromString(s);
     }
 }

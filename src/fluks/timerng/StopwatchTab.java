@@ -1,10 +1,12 @@
 package fluks.timerng;
 
+import fluks.timerng.Settings.ActiveTab;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
@@ -19,16 +21,42 @@ import javax.swing.SwingUtilities;
 /**
  *
  */
-public class StopwatchTab extends JPanel {
+public class StopwatchTab extends JPanel implements Tab {
     private Timer timer;
     private volatile TimeUnits time;
     private static final long NOT_RUNNING = -1;
     private long lastLapInMS = NOT_RUNNING;
+    private final ActiveTab tab = Settings.ActiveTab.STOPWATCH_TAB;
 
     /**
      */
     public StopwatchTab() {
         initComponents();
+        loadLaps();
+    }
+
+    @Override
+    public ActiveTab getTab() {
+        return tab;
+    }
+
+    private void loadLaps() {
+        for(var l : Settings.INSTANCE.getLaps()) {
+            lapsPanel.add(new JLabel(l));
+        }
+
+        var bar = scrollPane.getVerticalScrollBar();
+        SwingUtilities.invokeLater(() -> {
+            bar.setValue(bar.getMaximum());
+        });
+    }
+
+    public void saveState() {
+        List<String> laps = List.of(lapsPanel.getComponents()).stream()
+            .map(l -> {
+                return ((JLabel) l).getText();
+            }).toList();
+        Settings.INSTANCE.setLaps(laps);
     }
 
     /**
