@@ -27,7 +27,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
-import javax.swing.event.AncestorEvent;
 
 public class GUI extends JFrame {
     private final Sound sound;
@@ -61,13 +60,7 @@ public class GUI extends JFrame {
         }
 
         activateTab();
-
-        notificationMenuItem.addAncestorListener(new ComponentAddListener() {
-            @Override
-            public void ancestorAdded(AncestorEvent ae) {
-                notificationMenuItem.setState(Settings.INSTANCE.getNotify());
-            }
-        });
+        notificationMenuItem.setState(Settings.INSTANCE.getNotify());
     }
 
     private void activateTab() {
