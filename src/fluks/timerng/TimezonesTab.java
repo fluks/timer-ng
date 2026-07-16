@@ -1,40 +1,47 @@
 package fluks.timerng;
 
 import fluks.timerng.Settings.ActiveTab;
-import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox.KeySelectionManager;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
- * @author jukka
  */
 public class TimezonesTab extends javax.swing.JPanel implements Tab {
     private Timer timer;
     private final ActiveTab tab = Settings.ActiveTab.TIMEZONES_TAB;
+    private final GridBagConstraints gbc = new GridBagConstraints();
+    private Map<TZObject, JLabel> tzs = new HashMap();
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     /**
      */
     public TimezonesTab() {
         initComponents();
+        gbc.insets = new Insets(2, 4, 2, 4);
+        gbc.anchor = GridBagConstraints.WEST;
+
         addTimeZones();
         startClockTimer();
         timezonesComboBox.setKeySelectionManager(new ZoneKeySelectionManager());
         getState();
+        addSelectedTimeZones();
     }
 
     /**
@@ -60,17 +67,80 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
     /**
      */
     private void updateAllClocks() {
-        for (var comp : timezonesPanel.getComponents()) {
-            if (comp instanceof TimeZonePanel tzPanel) {
-                tzPanel.updateTime();
-            }
+        tzs.forEach((t, l) -> {
+            var now = ZonedDateTime.now(t.getId());
+            l.setText(TIME_FORMAT.format(now));
+        });
+    }
+
+    /**
+     * @param row
+     */
+    private void pushTimezonesToTop(int row) {
+        gbc.gridy = row;
+        gbc.gridx = 0;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        timezonesPanel.add(Box.createVerticalGlue(), gbc);
+    }
+
+    /**
+     * @param tz
+     */
+    private void addTimeZoneRow(TZObject tz, int row) {
+        gbc.gridy = row;
+
+        gbc.gridx = 0;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        timezonesPanel.add(new JLabel(tz.toString()), gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 0;
+
+        var now = ZonedDateTime.now(tz.getId());
+        var timeLabel = new JLabel(TIME_FORMAT.format(now));
+        tzs.put(tz, timeLabel);
+        timezonesPanel.add(timeLabel, gbc);
+
+        gbc.gridx = 2;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        timezonesPanel.add(Box.createGlue(), gbc);
+
+        gbc.gridx = 3;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        var removeButton = new JButton();
+        removeButton.setIcon(new ImageIcon(getClass().getResource("/resources/remove.png"))); // NOI18N
+        removeButton.setToolTipText("Remove");
+        removeButton.setBorderPainted(false);
+        removeButton.setContentAreaFilled(false);
+        removeButton.setFocusPainted(false);
+        removeButton.addActionListener((ae) -> {
+            tzs.remove(tz);
+            timezonesPanel.removeAll();
+            addSelectedTimeZones();
+        });
+        timezonesPanel.add(removeButton, gbc);
+    }
+
+    /**
+     */
+    private void addSelectedTimeZones() {
+        int row = 0;
+        for (var t : tzs.keySet()) {
+            addTimeZoneRow(t, row++);
         }
+        pushTimezonesToTop(row);
+        timezonesPanel.revalidate();
+        timezonesPanel.repaint();
     }
 
     /**
      */
     private void addTimeZones() {
-        var ids = new TreeSet<String>(ZoneId.getAvailableZoneIds());
+        var ids = new TreeSet<>(ZoneId.getAvailableZoneIds());
         for (var id : ids) {
             var tz = ZoneId.of(id);
             timezonesComboBox.addItem(new TZObject(tz));
@@ -80,25 +150,18 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
     /**
      */
     public void saveState() {
-        var zones= new ArrayList<ZoneId>();
-        for (var comp : timezonesPanel.getComponents()) {
-            if (comp instanceof TimeZonePanel tzPanel) {
-                zones.add(tzPanel.tz.id);
-            }
-        }
-
-        Settings.INSTANCE.setTimezones(zones);
+        Settings.INSTANCE.setTimezones(tzs.keySet().stream()
+            .map((t) -> t.getId()).toList());
     }
 
     /**
      */
     private void getState() {
-        Settings.INSTANCE.getTimezones().stream().
-            forEachOrdered((id) -> {
-                 var tz = new TZObject(id);
-                 timezonesPanel.add(new TimeZonePanel(tz));
-            });
-        timezonesPanel.revalidate();
+        tzs = Settings.INSTANCE.getTimezones().stream()
+            .collect(Collectors.toMap(
+                id -> new TZObject(id),
+                id -> new JLabel()
+            ));
     }
 
     /**
@@ -114,10 +177,33 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         }
 
         /**
-         * @return 
+         * @return
          */
         public ZoneId getId() {
             return id;
+        }
+
+        /**
+         * @param o
+         * @return
+         */
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof TZObject other)) {
+                return false;
+            }
+            return id.equals(other.id);
+        }
+
+        /**
+         * @return
+         */
+        @Override
+        public int hashCode() {
+            return id.hashCode();
         }
 
         /**
@@ -126,7 +212,7 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
         @Override
         public String toString() {
             var now = ZonedDateTime.now(id);
-            return now.getOffset() + " " + id;
+            return now.getOffset().toString() + " " + id;
         }
     }
 
@@ -177,7 +263,7 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
 
         timeZonesScrollPane.setToolTipText("Type to search");
 
-        timezonesPanel.setLayout(new javax.swing.BoxLayout(timezonesPanel, javax.swing.BoxLayout.PAGE_AXIS));
+        timezonesPanel.setLayout(new java.awt.GridBagLayout());
         timeZonesScrollPane.setViewportView(timezonesPanel);
 
         jPanel3.add(timeZonesScrollPane, "card2");
@@ -203,8 +289,9 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
      */
     private void addActionPerformed(ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
         var tz = (TZObject) timezonesComboBox.getSelectedItem();
-        timezonesPanel.add(new TimeZonePanel(tz));
-        timezonesPanel.revalidate();
+        tzs.put(tz, null);
+        timezonesPanel.removeAll();
+        addSelectedTimeZones();
 
         var bar = timeZonesScrollPane.getVerticalScrollBar();
         SwingUtilities.invokeLater(() -> {
@@ -216,75 +303,11 @@ public class TimezonesTab extends javax.swing.JPanel implements Tab {
      * @param evt 
      */
     private void resetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        tzs = new HashMap<>();
         timezonesPanel.removeAll();
         timezonesPanel.revalidate();
         timezonesPanel.repaint();
     }//GEN-LAST:event_resetButtonActionPerformed
-
-    /**
-     */
-    private final class TimeZonePanel extends JPanel {
-        private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
-
-        private final JLabel timeLabel;
-        private final JLabel tzLabel;
-        private final JButton removeButton;
-        private final TZObject tz;
-
-        /**
-         * @param tz 
-         */
-        public TimeZonePanel(TZObject tz) {
-            this.tz = tz;
-
-            setAlignmentX(0.0F);
-            setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-
-            tzLabel = new JLabel();
-            tzLabel.setText(tz.toString());
-            add(tzLabel);
-
-            var filler2 = new Box.Filler(new Dimension(20, 0), new Dimension(20, 0), new Dimension(20, 0));
-            add(filler2);
-
-            timeLabel = new JLabel();
-            timeLabel.setText("00:00:00");
-            add(timeLabel);
-
-            var filler1 = new Box.Filler(new Dimension(0, 0), new Dimension(0, 0), new Dimension(10000, 0));
-            add(filler1);
-
-            removeButton = new JButton();
-            removeButton.setIcon(new ImageIcon(getClass().getResource("/resources/remove.png"))); // NOI18N
-            removeButton.setToolTipText("Remove");
-            removeButton.setBorderPainted(false);
-            removeButton.setContentAreaFilled(false);
-            removeButton.setFocusPainted(false);
-            removeButton.addActionListener(this::removeButtonActionPerformed);
-            add(removeButton);
-
-            updateTime();
-        }
-
-        /**
-         */
-        public void updateTime() {
-            var now = ZonedDateTime.now(tz.getId());
-            timeLabel.setText(TIME_FORMAT.format(now));
-        }
-
-        /**
-         * @param evt 
-         */
-        private void removeButtonActionPerformed(ActionEvent evt) {
-            var parent = getParent();
-            if (parent != null) {
-                parent.remove(this);
-                parent.revalidate();
-                parent.repaint();
-            }
-        }
-    }
 
     /**
      */
