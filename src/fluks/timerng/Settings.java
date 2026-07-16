@@ -232,7 +232,10 @@ public enum Settings {
      * @return 
      */
     public List<String> getLaps() {
-        var s = prefs.get("laps", "[]");
+        var s = prefs.get("laps", null);
+        if (s == null) {
+            return new ArrayList<String>();
+        }
         return (List<String>) Utils.readObjectFromString(s);
     }
 }
