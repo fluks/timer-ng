@@ -4,7 +4,6 @@ import fluks.swing.utils.SwingUtils;
 import fluks.timerng.Settings.ActiveTab;
 import fluks.timerng.sound.AbstractClipWrapper;
 import fluks.timerng.sound.NoSound;
-import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,7 +11,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.MalformedURLException;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
@@ -387,16 +385,12 @@ public class TimerTab extends JPanel implements Tab {
                     else if (TimeUnits.timeUnitsAreEqual(time, target)) {
                         alarm.play();
                         if (Settings.INSTANCE.getNotify()) {
-                            try {
-                                SwingUtils.showDesktopNotification(
-                                        "Timer finished",
-                                        "Timer you set to " + target.toString() + " is finished.",
-                                        Global.PROGRAM_NAME,
-                                        null,
-                                        5000);
-                            }
-                            catch (MalformedURLException | AWTException ex) {
-                            }
+                            SwingUtils.showDesktopNotification(
+                                    "Timer finished",
+                                    "Timer you set to " + target.toString() + " is finished.",
+                                    Global.PROGRAM_NAME,
+                                    null,
+                                    5000);
                         }
                         timer.cancel();
                         timerIsRunning = false;

@@ -1,6 +1,5 @@
 package fluks.swing.utils;
 
-import java.awt.AWTException;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.SystemTray;
@@ -8,8 +7,7 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.Window;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -46,10 +44,8 @@ public class SwingUtils {
      * @param appName
      * @param icon
      * @param expire
-     * @throws MalformedURLException
-     * @throws AWTException
      */
-    public static void showDesktopNotification(String title, String message, String appName, String icon, Integer expire) throws MalformedURLException, AWTException {
+    public static void showDesktopNotification(String title, String message, String appName, String icon, Integer expire) {
         title = title != null ? title : "";
         message = message != null ? message : "";
         appName = appName != null ? "--app-name=" + appName : "";
@@ -88,12 +84,17 @@ public class SwingUtils {
             }
         }
         else if (SystemTray.isSupported()) {
-            var tray = SystemTray.getSystemTray();
-            var image = Toolkit.getDefaultToolkit().createImage(new URL(icon));
-            var trayIcon = new TrayIcon(image, title);
-            trayIcon.setImageAutoSize(true);
-            tray.add(trayIcon);
-            trayIcon.displayMessage(title, message, TrayIcon.MessageType.INFO);
+            try {
+                var tray = SystemTray.getSystemTray();
+                var image = Toolkit.getDefaultToolkit().createImage(URI.create(icon).toURL());
+                var trayIcon = new TrayIcon(image, title);
+                trayIcon.setImageAutoSize(true);
+                tray.add(trayIcon);
+                trayIcon.displayMessage(title, message, TrayIcon.MessageType.INFO);
+            }
+            catch (Exception ex) {
+                Logger.getLogger(SwingUtils.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

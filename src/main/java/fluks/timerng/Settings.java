@@ -234,7 +234,7 @@ public enum Settings {
     public List<String> getLaps() {
         var s = prefs.get("laps", null);
         if (s == null) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
         return (List<String>) Utils.readObjectFromString(s);
     }

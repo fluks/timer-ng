@@ -3,7 +3,6 @@ package fluks.timerng;
 import fluks.swing.utils.SwingUtils;
 import fluks.timerng.Settings.ActiveTab;
 import fluks.timerng.sound.AbstractClipWrapper;
-import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ContainerAdapter;
 import java.awt.event.ContainerEvent;
-import java.net.MalformedURLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -308,18 +306,14 @@ public class AlarmTab extends JPanel implements Tab {
                         timer.cancel();
                         timer = null;
                         if (Settings.INSTANCE.getNotify()) {
-                            try {
-                                // Set nano to 0 to not show it.
-                                var time = targetTime.withNano(0).format(DateTimeFormatter.ISO_TIME);
-                                SwingUtils.showDesktopNotification(
-                                        "Alarm finished",
-                                        "Alarm you set to " + time + " is finished.",
-                                        Global.PROGRAM_NAME,
-                                        null,
-                                        5000);
-                            }
-                            catch (MalformedURLException | AWTException ex) {
-                            }
+                            // Set nano to 0 to not show it.
+                            var time = targetTime.withNano(0).format(DateTimeFormatter.ISO_TIME);
+                            SwingUtils.showDesktopNotification(
+                                    "Alarm finished",
+                                    "Alarm you set to " + time + " is finished.",
+                                    Global.PROGRAM_NAME,
+                                    null,
+                                    5000);
                         }
                     }
                     else {
